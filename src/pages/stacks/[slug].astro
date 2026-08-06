@@ -80,11 +80,7 @@ const jsonLd = {
 
       <div class="stack-detail__items">
         <div class="card-grid">
-          {
-            stack.entries.map((entry, i) => (
-              <Card entry={entry} showStage index={i + 1} />
-            ))
-          }
+          {stack.entries.map((entry) => <Card entry={entry} showStage />)}
         </div>
       </div>
     </div>

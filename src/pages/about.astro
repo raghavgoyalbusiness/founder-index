@@ -71,7 +71,7 @@ import { totals, REPO } from '~/lib/data';
 
       <h2>Honest about uncertainty</h2>
       <p>
-        {totals.unverified} of the {totals.entries} entries carry an{' '}
+        <a href="/unverified">{totals.unverified} of the {totals.entries} entries</a> carry an{' '}
         <span class="chip chip--unverified">unverified</span> chip. That means the link or
         the description was inferred from a name in the original notes and nobody has
         confirmed it since. The tool might be misnamed, dead, or something other than what

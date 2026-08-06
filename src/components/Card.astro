@@ -10,17 +10,20 @@ interface Props {
   entry: Entry;
   /** Show which stage this belongs to — used off the stage pages. */
   showStage?: boolean;
-  /** Ordinal, for stacks. */
-  index?: number;
 }
 
-const { entry, showStage = false, index } = Astro.props;
+const { entry, showStage = false } = Astro.props;
+
+/** Cost is the first thing a founder filters on, so it gets a distinct chip
+ *  rather than sitting in the run of tags looking like everything else. */
+const COST = new Set(['free', 'freemium', 'paid']);
+const cost = entry.tags.find((tag) => COST.has(tag));
+const rest = entry.tags.filter((tag) => tag !== cost);
 ---
 
 <article class="card" data-tags={entry.tags.join(' ')} data-name={entry.name}>
   <div style="display:flex;align-items:flex-start;gap:0.6rem">
     <h3 class="card__name" style="flex:1;min-width:0">
-      {index !== undefined && <span class="card__ord">{String(index).padStart(2, '0')}</span>}
       <a class="card__link" href={entry.href}>{entry.name}</a>
     </h3>
 
@@ -52,8 +55,9 @@ const { entry, showStage = false, index } = Astro.props;
 
   <div class="card__meta">
     {showStage && <span class="chip chip--stage">{entry.stageRef.name}</span>}
+    {cost && <a class={`chip chip--cost chip--${cost}`} href={`/tag/${cost}`}>{cost}</a>}
     {entry.verify && <span class="chip chip--unverified">unverified</span>}
     {entry.affiliate && <span class="chip chip--affiliate">affiliate link</span>}
-    {entry.tags.map((tag) => <a class="chip" href={`/tag/${tag}`}>{tag}</a>)}
+    {rest.map((tag) => <a class="chip" href={`/tag/${tag}`}>{tag}</a>)}
   </div>
 </article>

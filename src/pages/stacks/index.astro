@@ -19,21 +19,31 @@ import { stacks, totals } from '~/lib/data';
       </p>
     </header>
 
+    {/* No ordinals here: the twelve stages are a sequence, five stacks are not.
+        The useful number is how much is in one and how far across the journey
+        it reaches. */}
     <div class="stack-list">
       {
-        stacks.map((stack, i) => (
-          <a class="stack-row" href={`/stacks/${stack.slug}`} style={`--i:${i}`}>
-            <span class="stack-row__num mono">{String(i + 1).padStart(2, '0')}</span>
-            <span class="stack-row__body">
-              <span class="stack-row__title">{stack.title}</span>
-              <span class="stack-row__for">{stack.for}</span>
-              <span class="stack-row__names">
-                {stack.entries.map((e) => e.name).join(' · ')}
+        stacks.map((stack, i) => {
+          const stagesTouched = new Set(stack.entries.map((e) => e.stage)).size;
+          return (
+            <a class="stack-row" href={`/stacks/${stack.slug}`} style={`--i:${i}`}>
+              <span class="stack-row__body">
+                <span class="stack-row__title">{stack.title}</span>
+                <span class="stack-row__for">{stack.for}</span>
+                <span class="stack-row__names">
+                  {stack.entries.map((e) => e.name).join(' · ')}
+                </span>
               </span>
-            </span>
-            <span class="stack-row__count mono">{stack.entries.length}</span>
-          </a>
-        ))
+              <span class="stack-row__count mono">
+                {stack.entries.length} resources
+                <span class="stack-row__span">
+                  across {stagesTouched} {stagesTouched === 1 ? 'stage' : 'stages'}
+                </span>
+              </span>
+            </a>
+          );
+        })
       }
     </div>
   </div>

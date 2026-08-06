@@ -8,6 +8,7 @@ import {
   tagsInStage,
   type Stage,
 } from '~/lib/data';
+import { slugify } from '~/lib/text.js';
 
 export function getStaticPaths() {
   return stages.map((stage, i) => ({
@@ -34,6 +35,21 @@ const items = entriesInStage(stage.slug);
 const groups = groupByCategory(items);
 const tags = tagsInStage(stage.slug);
 const pad = (n: number) => String(n).padStart(2, '0');
+
+/** The summary a scanner wants before the detail: how much is here, how it
+ *  breaks down, and how much of it hasn't been checked. */
+const freeCount = items.filter((e) => e.tags.includes('free')).length;
+const unverifiedCount = items.filter((e) => e.verify).length;
+const summary = [
+  { label: 'resources', value: items.length },
+  { label: 'categories', value: groups.length },
+  { label: 'free', value: freeCount },
+  { label: 'unverified', value: unverifiedCount },
+];
+
+/** Jumping beats scrolling once a stage runs past a screenful of sections. */
+const showJump = groups.length > 5;
+const catId = (category: string) => `c-${slugify(category)}`;
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -71,26 +87,57 @@ const jsonLd = {
       </p>
       <h1>{stage.name}</h1>
       <p class="lede prose-measure" style="margin-top:0.7rem">{stage.question}</p>
+
+      <dl class="summary">
+        {
+          summary.map((stat) => (
+            <div class="summary__stat">
+              <dt class="eyebrow">{stat.label}</dt>
+              <dd>{stat.value}</dd>
+            </div>
+          ))
+        }
+      </dl>
     </header>
+
+    {
+      showJump && (
+        <nav class="jump" aria-label="Jump to a category">
+          <span class="eyebrow jump__label">Jump to</span>
+          <div class="jump__list">
+            {groups.map((group) => (
+              <a class="jump__link" href={`#${catId(group.category)}`} data-jump={group.category}>
+                {group.category} <span class="jump__n">{group.items.length}</span>
+              </a>
+            ))}
+          </div>
+        </nav>
+      )
+    }
 
     {
       tags.length > 0 && (
         <div class="filters" data-filters>
-          <span class="eyebrow" style="margin-right:0.35rem">Filter</span>
-          <button type="button" class="chip is-on" data-tag="" aria-pressed="true">
-            everything <span style="opacity:0.6">{items.length}</span>
-          </button>
-          {tags.map((t) => (
-            <a
-              class="chip"
-              href={`/tag/${t.tag}`}
-              data-tag={t.tag}
-              aria-pressed="false"
-              data-count={t.count}
-            >
-              {t.tag} <span style="opacity:0.6">{t.count}</span>
-            </a>
-          ))}
+          <span class="eyebrow filters__label">Filter</span>
+          <div class="filters__chips">
+            <button type="button" class="chip is-on" data-tag="" aria-pressed="true">
+              everything <span class="chip__n">{items.length}</span>
+            </button>
+            {tags.map((t) => (
+              <a
+                class="chip"
+                href={`/tag/${t.tag}`}
+                data-tag={t.tag}
+                aria-pressed="false"
+                data-count={t.count}
+              >
+                {t.tag} <span class="chip__n">{t.count}</span>
+              </a>
+            ))}
+          </div>
+          <p class="filters__count mono" data-count-out aria-live="polite">
+            {items.length} shown
+          </p>
         </div>
       )
     }
@@ -98,9 +145,14 @@ const jsonLd = {
     <div data-results>
       {
         groups.map((group) => (
-          <section class="cat" data-group={group.category} aria-labelledby={`c-${group.category}`}>
+          <section
+            class="cat"
+            id={catId(group.category)}
+            data-group={group.category}
+            aria-labelledby={`h-${catId(group.category)}`}
+          >
             <div class="section-rule">
-              <h2 id={`c-${group.category}`}>{group.category}</h2>
+              <h2 id={`h-${catId(group.category)}`}>{group.category}</h2>
               <span class="mono" style="color:var(--muted)" data-group-count>
                 {group.items.length}
               </span>
@@ -154,6 +206,9 @@ const jsonLd = {
     const groups = Array.from(document.querySelectorAll<HTMLElement>('[data-group]'));
     const empty = document.querySelector<HTMLElement>('[data-empty]');
     const chips = Array.from(bar.querySelectorAll<HTMLElement>('[data-tag]'));
+    const countOut = document.querySelector<HTMLElement>('[data-count-out]');
+    const jumps = Array.from(document.querySelectorAll<HTMLElement>('[data-jump]'));
+    const total = cards.length;
 
     const apply = (tag: string, push: boolean) => {
       let shown = 0;
@@ -170,12 +225,24 @@ const jsonLd = {
         group.hidden = visible === 0;
         const count = group.querySelector('[data-group-count]');
         if (count) count.textContent = String(visible);
+
+        // Keep the jump nav honest — no links to sections that aren't there.
+        const jump = jumps.find((j) => j.dataset.jump === group.dataset.group);
+        if (jump) {
+          jump.hidden = visible === 0;
+          const n = jump.querySelector('.jump__n');
+          if (n) n.textContent = String(visible);
+        }
       }
 
       for (const chip of chips) {
         const on = (chip.dataset.tag || '') === tag;
         chip.setAttribute('aria-pressed', String(on));
         chip.classList.toggle('is-on', on);
+      }
+
+      if (countOut) {
+        countOut.textContent = tag ? `${shown} of ${total} shown` : `${total} shown`;
       }
 
       if (empty) empty.hidden = shown > 0;

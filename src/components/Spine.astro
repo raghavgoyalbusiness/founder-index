@@ -35,9 +35,16 @@ const pad = (n: number) => String(n).padStart(2, '0');
   }
   {
     position > 0 && (
-      <span class="spine__pos">
-        {pad(position)}/{pad(stages.length)}
-      </span>
+      <>
+        {/* Strip mode only: hover labels don't exist on a touch screen, so the
+            current stage has to say its own name. */}
+        <span class="spine__here" aria-hidden="true">
+          {pad(position)} {stages[position - 1].name}
+        </span>
+        <span class="spine__pos">
+          {pad(position)}/{pad(stages.length)}
+        </span>
+      </>
     )
   }
 </nav>

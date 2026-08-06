@@ -107,6 +107,9 @@
     --gutter: clamp(1.15rem, 4vw, 3rem);
     --max: 1180px;
     --spine-w: 3.5rem;
+    /* Height of the spine in strip mode. The sticky filter bar offsets by the
+       same value, so the two can never drift into overlapping. */
+    --spine-h: 3.05rem;
   }
 
   *,
@@ -570,7 +573,8 @@
     top: 0;
     z-index: 30;
     display: flex;
-    gap: 0.4rem;
+    min-height: var(--spine-h);
+    gap: 0.2rem;
     align-items: center;
     padding: 0.6rem var(--gutter);
     background: color-mix(in oklab, var(--paper) 88%, transparent);
@@ -589,7 +593,7 @@
   .spine__tick {
     position: relative;
     flex: 1 1 0;
-    min-width: 1rem;
+    min-width: 0.6rem;
     max-width: 2.25rem;
     display: grid;
     place-items: center;
@@ -601,7 +605,8 @@
   /* the mark itself */
   .spine__tick::before {
     content: '';
-    width: 0.75rem;
+    width: 100%;
+    max-width: 0.75rem;
     height: 2px;
     border-radius: 1px;
     background: var(--rule);
@@ -651,7 +656,6 @@
 
   .spine__pos {
     flex: 0 0 auto;
-    margin-left: auto;
     padding-left: 0.75rem;
     font-family: var(--font-mono);
     font-size: var(--t-2xs);
@@ -668,6 +672,7 @@
       inset-block: 0;
       left: 0;
       width: var(--spine-w);
+      min-height: 0;
       flex-direction: column;
       justify-content: center;
       gap: 0.75rem;
@@ -856,7 +861,7 @@
 
   /* Page headers ---------------------------------------------------------- */
   .page-head {
-    padding-block: clamp(2rem, 6vw, 3.75rem) clamp(1.25rem, 3vw, 2rem);
+    padding-block: clamp(2rem, 6vw, 3.75rem) clamp(1.1rem, 2.2vw, 1.5rem);
   }
 
   .page-head h1 {
@@ -1239,8 +1244,8 @@
   .stack-row {
     position: relative;
     display: grid;
-    grid-template-columns: 2.5rem 1fr auto;
-    gap: 0.25rem 1.25rem;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.25rem 2rem;
     align-items: baseline;
     padding: 1.3rem 0.9rem 1.4rem 0.75rem;
     border-bottom: 1px solid var(--rule);
@@ -1270,10 +1275,6 @@
   .stack-row:hover::before,
   .stack-row:focus-visible::before {
     transform: scaleY(1);
-  }
-
-  .stack-row__num {
-    color: var(--muted);
   }
 
   .stack-row__body {
@@ -1308,6 +1309,33 @@
 
   .stack-row__count {
     color: var(--muted);
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .stack-row__span {
+    display: block;
+    margin-top: 0.25rem;
+    opacity: 0.8;
+  }
+
+  @media (max-width: 40rem) {
+    .stack-row {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .stack-row__count {
+      text-align: left;
+    }
+
+    .stack-row__span {
+      display: inline;
+      margin-top: 0;
+    }
+
+    .stack-row__span::before {
+      content: ' ';
+    }
   }
 
   .stack-detail {
@@ -1645,5 +1673,256 @@
     font-size: 0.875rem;
     line-height: 1.65;
     color: var(--muted);
+  }
+}
+
+/* ==========================================================================
+   Scan layer
+
+   A stage page is operated, not read: you arrive knowing roughly what you
+   want and you're looking for the row that matches. These three pieces exist
+   to answer "how much is here", "where is the bit I want" and "what am I
+   looking at now" without scrolling to find out.
+   ========================================================================== */
+@layer components {
+  /* --- summary before detail ---------------------------------------------- */
+  .summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 2.5rem;
+    margin: 1.6rem 0 0;
+  }
+
+  .summary__stat dt {
+    margin-bottom: 0.15rem;
+  }
+
+  .summary__stat dd {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--t-xl);
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* The one stat that is a call to action rather than a fact. */
+  .summary__stat:last-child dd {
+    color: var(--muted);
+  }
+
+  /* --- jump nav ------------------------------------------------------------ */
+  .jump {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding-bottom: 0.35rem;
+  }
+
+  .jump__label {
+    flex: 0 0 auto;
+  }
+
+  .jump__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.15rem 0.9rem;
+    min-width: 0;
+  }
+
+  @media (max-width: 52rem) {
+    .jump__list {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-bottom: 0.2rem;
+      /* let it run to the screen edge so it reads as scrollable */
+      margin-right: calc(var(--gutter) * -1);
+      padding-right: var(--gutter);
+    }
+
+    .jump__list::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .jump__link {
+    font-size: 0.875rem;
+    color: var(--muted);
+    text-decoration: none;
+    white-space: nowrap;
+    border-bottom: 1px solid transparent;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .jump__link:hover,
+  .jump__link:focus-visible {
+    color: var(--ink);
+    border-bottom-color: var(--signal);
+  }
+
+  .jump__n {
+    font-family: var(--font-mono);
+    font-size: var(--t-2xs);
+    font-variant-numeric: tabular-nums;
+    opacity: 0.75;
+  }
+
+  /* Landing on a jump target shouldn't tuck the heading under the sticky bar. */
+  .cat {
+    scroll-margin-top: 7rem;
+  }
+
+  /* --- filters, kept within reach ------------------------------------------ */
+  .filters {
+    position: sticky;
+    /* clears the spine strip, which is sticky at the top on narrow screens */
+    top: var(--spine-h);
+    z-index: 20;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 0.35rem 0.75rem;
+    padding-block: 0.85rem;
+    margin-bottom: 1.75rem;
+    border-bottom: 1px solid var(--rule);
+    background: color-mix(in oklab, var(--paper) 92%, transparent);
+    backdrop-filter: blur(8px);
+  }
+
+  @media (min-width: 75rem) {
+    .filters {
+      /* the spine is a fixed rail up here and takes no vertical room */
+      top: 0;
+    }
+  }
+
+  .filters__label {
+    padding-top: 0.45rem;
+  }
+
+  .filters__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    min-width: 0;
+  }
+
+  .filters__count {
+    padding-top: 0.45rem;
+    color: var(--muted);
+    white-space: nowrap;
+    text-align: right;
+  }
+
+  @media (max-width: 40rem) {
+    .filters {
+      grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .filters__count {
+      grid-column: 2;
+      padding-top: 0;
+      text-align: left;
+    }
+  }
+
+  .chip__n {
+    opacity: 0.65;
+  }
+
+  /* --- cost reads at a glance ---------------------------------------------- */
+  /* Price is the first cut a founder makes, so the three cost tags get a
+     filled treatment and sit first. Everything else stays a quiet outline. */
+  .chip--cost {
+    border-color: transparent;
+    background: var(--ink-wash);
+    color: var(--ink);
+  }
+
+  .chip--free {
+    background: var(--signal-wash);
+    color: var(--signal);
+    border-color: color-mix(in oklab, var(--signal) 30%, transparent);
+  }
+
+  a.chip--cost:hover {
+    border-color: currentcolor;
+  }
+
+  /* --- the strip knows where it is ----------------------------------------- */
+  /* Hover labels are useless on a touch screen, so in strip mode the current
+     stage says its own name. */
+  .spine__here {
+    flex: 0 1 auto;
+    min-width: 0;
+    padding-left: 0.75rem;
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: var(--t-2xs);
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  @media (max-width: 46rem) {
+    .spine__pos {
+      display: none;
+    }
+  }
+
+  @media (min-width: 75rem) {
+    .spine__here {
+      display: none;
+    }
+  }
+}
+
+@layer components {
+  /* The contributor on-ramp on /unverified — instructions that look like a
+     job to do, not a paragraph to skim past. */
+  .checkit {
+    max-width: var(--measure);
+    margin-bottom: 3rem;
+    padding: 1.35rem 1.5rem 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+  }
+
+  .checkit__steps {
+    margin: 0.75rem 0 0;
+    padding-left: 1.25rem;
+    list-style: decimal;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: var(--muted);
+  }
+
+  .checkit__steps li + li {
+    margin-top: 0.4rem;
+  }
+
+  .checkit__steps li::marker {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--signal);
+  }
+
+  .checkit__steps code {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    padding: 0.1em 0.3em;
+    background: var(--ink-wash);
+    border-radius: 3px;
+    color: var(--ink);
+  }
+
+  .checkit__cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
   }
 }

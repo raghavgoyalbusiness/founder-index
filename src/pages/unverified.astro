@@ -1,0 +1,95 @@
+---
+import Base from '~/layouts/Base.astro';
+import Card from '~/components/Card.astro';
+import { entries, stages, totals, REPO } from '~/lib/data';
+
+const unverified = entries.filter((e) => e.verify);
+const byStage = stages
+  .map((stage) => ({ stage, items: unverified.filter((e) => e.stage === stage.slug) }))
+  .filter((group) => group.items.length > 0);
+
+const noLink = unverified.filter((e) => !e.url).length;
+const share = Math.round((unverified.length / totals.entries) * 100);
+---
+
+<Base
+  title="Unverified entries"
+  description={`${unverified.length} entries nobody has confirmed yet. Checking one is the smallest useful contribution you can make to the Founder Index.`}
+>
+  <div class="wrap">
+    <header class="page-head">
+      <p class="eyebrow">Needs a human</p>
+      <h1>The unverified {unverified.length}</h1>
+      <p class="lede prose-measure" style="margin-top:0.7rem">
+        These came out of the original notes as a name, sometimes a link, and a description
+        someone inferred rather than confirmed. Any one of them might be misnamed, dead, or
+        something other than what it says. They're here rather than hidden, because a guess
+        labelled as a guess beats a gap.
+      </p>
+
+      <dl class="summary">
+        <div class="summary__stat">
+          <dt class="eyebrow">unconfirmed</dt>
+          <dd>{unverified.length}</dd>
+        </div>
+        <div class="summary__stat">
+          <dt class="eyebrow">of the file</dt>
+          <dd>{share}%</dd>
+        </div>
+        <div class="summary__stat">
+          <dt class="eyebrow">no link at all</dt>
+          <dd>{noLink}</dd>
+        </div>
+        <div class="summary__stat">
+          <dt class="eyebrow">stages affected</dt>
+          <dd>{byStage.length}</dd>
+        </div>
+      </dl>
+    </header>
+
+    <section class="checkit">
+      <h2 class="eyebrow">How to clear one</h2>
+      <ol class="checkit__steps">
+        <li>Open the link. If there isn't one, find out whether the thing exists at all.</li>
+        <li>
+          Check the description is true — and that it says what the tool does <em>for you</em>,
+          in twelve words or fewer.
+        </li>
+        <li>
+          In <code>data/resources.json</code>, drop <code>"verify": true</code>, add
+          <code>"lastChecked"</code> with today's date, and put your handle in
+          <code>"addedBy"</code>.
+        </li>
+        <li>Open a pull request. That's the whole job.</li>
+      </ol>
+      <p class="checkit__cta">
+        <a class="btn" href={`${REPO}/edit/main/data/resources.json`} rel="noopener" target="_blank">
+          Edit the file
+        </a>
+        <a class="btn btn--ghost" href="/submit">How contributing works</a>
+      </p>
+    </section>
+
+    {
+      byStage.map((group) => (
+        <section class="cat">
+          <div class="section-rule">
+            <h2>
+              <a href={`/stage/${group.stage.slug}`} style="text-decoration:none">
+                {group.stage.name}
+              </a>
+            </h2>
+            <span class="mono" style="color:var(--muted)">
+              {group.items.length}
+            </span>
+          </div>
+          <div class="card-grid">
+            {group.items.map((entry) => (
+              <Card entry={entry} />
+            ))}
+          </div>
+        </section>
+      ))
+    }
+  </div>
+</Base>
