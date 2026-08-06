@@ -1,0 +1,43 @@
+---
+/**
+ * The progress spine. Twelve ticks, one per stage, persisting on every stage
+ * and tool page so you can move along the journey without going home first.
+ *
+ * A fixed rail on wide screens; a sticky strip at the top on narrow ones.
+ * Same markup either way — only the CSS changes.
+ */
+import { stages } from '~/lib/data';
+
+interface Props {
+  current: string;
+}
+
+const { current } = Astro.props;
+const position = stages.findIndex((s) => s.slug === current) + 1;
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<nav class="spine" aria-label="The twelve stages">
+  {
+    stages.map((stage, i) => (
+      <a
+        class="spine__tick"
+        href={`/stage/${stage.slug}`}
+        style={`--i:${i}`}
+        aria-current={stage.slug === current ? 'page' : undefined}
+        aria-label={`Stage ${i + 1} of ${stages.length}: ${stage.name}`}
+      >
+        <span class="spine__label" aria-hidden="true">
+          {pad(i + 1)} — {stage.name}
+        </span>
+      </a>
+    ))
+  }
+  {
+    position > 0 && (
+      <span class="spine__pos">
+        {pad(position)}/{pad(stages.length)}
+      </span>
+    )
+  }
+</nav>

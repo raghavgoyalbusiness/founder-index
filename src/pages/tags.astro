@@ -1,0 +1,61 @@
+---
+import Base from '~/layouts/Base.astro';
+import { tagCounts, allTags, totals } from '~/lib/data';
+
+const used = new Set(tagCounts.map((t) => t.tag));
+const unused = allTags.filter((t) => !used.has(t));
+const biggest = tagCounts[0]?.count ?? 1;
+---
+
+<Base
+  title="All tags"
+  description={`Every cross-cutting tag in the Founder Index — ${totals.tags} of them, filtering ${totals.entries} startup resources by price, country, format and kind.`}
+>
+  <div class="wrap">
+    <header class="page-head">
+      <p class="eyebrow">Cross-cutting</p>
+      <h1>Tags</h1>
+      <p class="lede prose-measure" style="margin-top:0.7rem">
+        Stages tell you when. Tags tell you what kind — what it costs, where it works,
+        whether it's a tool or something to read. They cut across all twelve.
+      </p>
+    </header>
+
+    <ul class="tag-list">
+      {
+        tagCounts.map((t) => (
+          <li>
+            <a class="tag-row" href={`/tag/${t.tag}`}>
+              <span class="tag-row__name">{t.tag}</span>
+              <span class="tag-row__bar" aria-hidden="true">
+                <span style={`width:${Math.max(4, Math.round((t.count / biggest) * 100))}%`} />
+              </span>
+              <span class="tag-row__count mono">{t.count}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    {
+      unused.length > 0 && (
+        <section style="margin-top:2.5rem">
+          <div class="section-rule">
+            <h2 class="eyebrow" style="letter-spacing:0.14em">In the schema, unused</h2>
+          </div>
+          <p class="prose-measure" style="color:var(--muted);margin-bottom:0.8rem">
+            These are allowed but nothing carries them yet. Good candidates for a first
+            contribution.
+          </p>
+          <div style="display:flex;flex-wrap:wrap;gap:0.35rem">
+            {unused.map((tag) => (
+              <a class="chip" href={`/tag/${tag}`}>
+                {tag}
+              </a>
+            ))}
+          </div>
+        </section>
+      )
+    }
+  </div>
+</Base>

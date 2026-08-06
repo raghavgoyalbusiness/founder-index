@@ -1,0 +1,230 @@
+---
+import Base from '~/layouts/Base.astro';
+import Card from '~/components/Card.astro';
+import { entries, related, alternativesOf, REPO, type Entry } from '~/lib/data';
+
+export function getStaticPaths() {
+  return entries.map((entry) => ({ params: { slug: entry.slug }, props: { entry } }));
+}
+
+interface Props {
+  entry: Entry;
+}
+
+const { entry } = Astro.props;
+
+const alternatives = alternativesOf(entry);
+const seeAlso = related(entry);
+const canonical = new URL(entry.href, Astro.site).href;
+
+const issueUrl =
+  `${REPO}/issues/new?labels=broken-link&title=` +
+  encodeURIComponent(`Broken or wrong: ${entry.name}`) +
+  '&body=' +
+  encodeURIComponent(
+    `**Entry:** ${entry.name}\n` +
+      `**Page:** ${canonical}\n` +
+      `**Link on file:** ${entry.url || '(none)'}\n\n` +
+      `What's wrong? (dead link, redirects somewhere else, description is off, the product changed)\n\n`
+  );
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemPage',
+    name: entry.name,
+    description: entry.what,
+    url: canonical,
+    isPartOf: { '@type': 'WebSite', name: 'Founder Index', url: Astro.site?.href },
+    mainEntity: {
+      '@type': 'Thing',
+      name: entry.name,
+      description: entry.what,
+      ...(entry.url ? { url: entry.url } : {}),
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Stages', item: Astro.site?.href },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: entry.stageRef.name,
+        item: new URL(`/stage/${entry.stage}`, Astro.site).href,
+      },
+      { '@type': 'ListItem', position: 3, name: entry.name, item: canonical },
+    ],
+  },
+];
+---
+
+<Base
+  title={`${entry.name} — ${entry.what}`}
+  description={`${entry.what}. Filed under ${entry.stageRef.name.toLowerCase()} in the Founder Index — an open directory of startup resources organised by stage.`}
+  spine={entry.stage}
+  jsonLd={jsonLd}
+>
+  <div class="wrap">
+    <article class="tool">
+      <div class="tool__top">
+      <header class="page-head">
+        <p class="eyebrow">
+          <a href="/" style="text-decoration:none">Stages</a> ·{' '}
+          <a href={`/stage/${entry.stage}`} style="text-decoration:none">
+            {entry.stageRef.name}
+          </a> · {entry.category}
+        </p>
+        <h1>{entry.name}</h1>
+        <p class="tool__what">{entry.what}</p>
+
+        <div class="tool__actions">
+          {
+            entry.url ? (
+              <a class="btn" href={entry.url} rel="noopener nofollow" target="_blank">
+                Visit {entry.host}
+                <svg width="11" height="11" viewBox="0 0 12 12" aria-hidden="true">
+                  <path
+                    d="M4 2h6v6M10 2 2.5 9.5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </a>
+            ) : (
+              <p class="tool__nolink">
+                No link on file. This one came out of the original notes with a name and
+                nothing else — <a href={issueUrl}>tell us where it lives</a>.
+              </p>
+            )
+          }
+          {
+            entry.verify && (
+              <span class="chip chip--unverified">
+                unverified — nobody has checked this yet
+              </span>
+            )
+          }
+          {entry.affiliate && <span class="chip chip--affiliate">affiliate link</span>}
+        </div>
+
+        {
+          entry.why && (
+            <section class="tool__why">
+              <h2 class="eyebrow">Why it's here</h2>
+              <p>{entry.why}</p>
+            </section>
+          )
+        }
+      </header>
+
+      <aside class="tool__aside">
+        <dl class="facts">
+        <div class="facts__row">
+          <dt>Stage</dt>
+          <dd><a href={`/stage/${entry.stage}`}>{entry.stageRef.name}</a></dd>
+        </div>
+        <div class="facts__row">
+          <dt>Category</dt>
+          <dd>{entry.category}</dd>
+        </div>
+        <div class="facts__row">
+          <dt>Tags</dt>
+          <dd>
+            {
+              entry.tags.length ? (
+                <span class="facts__tags">
+                  {entry.tags.map((tag) => (
+                    <a class="chip" href={`/tag/${tag}`}>
+                      {tag}
+                    </a>
+                  ))}
+                </span>
+              ) : (
+                <span style="color:var(--muted)">none yet</span>
+              )
+            }
+          </dd>
+        </div>
+        <div class="facts__row">
+          <dt>Last checked</dt>
+          <dd>
+            {
+              entry.lastChecked ? (
+                <time datetime={entry.lastChecked}>{entry.lastChecked}</time>
+              ) : (
+                <span style="color:var(--muted)">never</span>
+              )
+            }
+          </dd>
+        </div>
+        <div class="facts__row">
+          <dt>Added by</dt>
+          <dd>
+            {
+              entry.addedBy ? (
+                <a href={`https://github.com/${entry.addedBy}`} rel="noopener">
+                  @{entry.addedBy}
+                </a>
+              ) : (
+                <span style="color:var(--muted)">the original notes</span>
+              )
+            }
+          </dd>
+        </div>
+        </dl>
+
+        <p class="tool__report">
+          <a class="btn btn--ghost" href={issueUrl} rel="noopener" target="_blank">
+            Report a broken link
+          </a>
+          <span class="tool__report-note">
+            Opens a pre-filled GitHub issue. No account needed to read it, one to file it.
+          </span>
+        </p>
+      </aside>
+      </div>
+
+      {
+        alternatives.length > 0 && (
+          <section class="tool__section">
+            <div class="section-rule">
+              <h2>Alternatives</h2>
+            </div>
+            <div class="card-grid">
+              {alternatives.map((alt) => (
+                <Card entry={alt} showStage={alt.stage !== entry.stage} />
+              ))}
+            </div>
+          </section>
+        )
+      }
+    </article>
+
+    {
+      seeAlso.length > 0 && (
+        <section class="tool__section">
+          <div class="section-rule">
+            <h2>Also in {entry.stageRef.name.toLowerCase()}</h2>
+            <a
+              class="mono"
+              style="margin-left:auto;text-decoration:none"
+              href={`/stage/${entry.stage}`}
+            >
+              All →
+            </a>
+          </div>
+          <div class="card-grid">
+            {seeAlso.map((other) => (
+              <Card entry={other} />
+            ))}
+          </div>
+        </section>
+      )
+    }
+  </div>
+</Base>

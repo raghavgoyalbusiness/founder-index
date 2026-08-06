@@ -1,0 +1,163 @@
+---
+import Base from '~/layouts/Base.astro';
+import { launchBacklog, excludedFromSource, REPO, totals, allTags, stages } from '~/lib/data';
+
+const schemaExample = `{
+  "name": "SeedLegals",
+  "url": "https://seedlegals.com/",
+  "what": "UK funding rounds and SEIS/EIS paperwork",
+  "stage": "legal",
+  "category": "Cap table",
+  "tags": ["uk", "paid"],
+
+  "verify": false,
+  "why": "Optional. One or two sentences of first-hand context.",
+  "alternatives": ["Vestd"],
+  "addedBy": "your-github-handle",
+  "lastChecked": "2026-08-06"
+}`;
+
+const excludedGroups = [
+  { key: 'personal', label: 'Personal', note: 'Someone’s own links. Not useful to anyone else.' },
+  { key: 'offTopic', label: 'Off topic', note: 'Good sites, nothing to do with starting a company.' },
+  {
+    key: 'riskyOrUnclear',
+    label: 'Risky or unclear',
+    note: 'Piracy, terms-of-service violations, likeness and privacy problems. These stay out.',
+  },
+  {
+    key: 'unidentified',
+    label: 'Unidentified',
+    note: 'A name in a note and nothing else. If you know what one of these is, that’s a contribution.',
+  },
+] as const;
+
+const newIssue = `${REPO}/issues/new?template=add-resource.yml`;
+---
+
+<Base
+  title="Submit a resource"
+  description="How to add a tool, grant, programme or piece of reading to the Founder Index. Two routes: a pull request against the JSON, or an issue from the template."
+  nav="submit"
+>
+  <div class="wrap">
+    <header class="page-head">
+      <p class="eyebrow">Contribute</p>
+      <h1>Add something</h1>
+      <p class="lede prose-measure" style="margin-top:0.7rem">
+        The data is one JSON file in a public repo. There is no CMS, no login, and no
+        approval queue beyond a pull request. Two ways in, depending on how comfortable
+        you are with git.
+      </p>
+    </header>
+
+    <div class="routes">
+      <section class="route">
+        <p class="eyebrow">Route one</p>
+        <h2>Open a pull request</h2>
+        <p>
+          Add an object to <code>data/resources.json</code>, commit, open a PR. CI validates
+          the schema, the twelve-word limit and duplicate links before anyone reviews it,
+          so you'll know within a minute if something is off.
+        </p>
+        <p>
+          <a class="btn" href={`${REPO}/edit/main/data/resources.json`} rel="noopener" target="_blank">
+            Edit the file on GitHub
+          </a>
+        </p>
+      </section>
+
+      <section class="route">
+        <p class="eyebrow">Route two</p>
+        <h2>File an issue</h2>
+        <p>
+          If you'd rather not touch JSON, the issue template asks the same questions in a
+          form. Someone else turns it into an entry. Slower, but nothing gets lost.
+        </p>
+        <p>
+          <a class="btn btn--ghost" href={newIssue} rel="noopener" target="_blank">
+            Open the issue template
+          </a>
+        </p>
+      </section>
+    </div>
+
+    <section class="prose" style="margin-top:3rem">
+      <div class="section-rule"><h2>The bar</h2></div>
+      <ul>
+        <li>
+          <strong>It solves a specific founder problem.</strong> Not "a good tool" — a tool
+          for a moment. If you can't name the moment, it doesn't go in.
+        </li>
+        <li>
+          <strong>The description is honest and short.</strong> Twelve words, plain verbs,
+          what it does <em>for you</em>. Never the tool's own homepage copy. CI counts the
+          words and fails the build at thirteen.
+        </li>
+        <li>
+          <strong>If you haven't used it, say so.</strong> Set <code>"verify": true</code> and
+          it renders with a muted <span class="chip chip--unverified">unverified</span> chip
+          until someone confirms it. That's a normal state, not a failure — {totals.unverified}
+          of {totals.entries} entries are sitting there right now.
+        </li>
+        <li>
+          <strong>No paid placement.</strong> There is no amount of money that buys a listing
+          or a position. If a link ever carries an affiliate code it gets flagged on the card
+          and declared in the repo. See <a href="/about">About</a>.
+        </li>
+      </ul>
+
+      <div class="section-rule" style="margin-top:2.5rem"><h2>The shape of an entry</h2></div>
+      <p>
+        Required: <code>name</code>, <code>what</code>, <code>stage</code>,{' '}
+        <code>category</code>, <code>tags</code>. Plus <code>url</code>, unless{' '}
+        <code>verify</code> is true. Everything else is optional.
+      </p>
+      <pre><code>{schemaExample}</code></pre>
+      <p>
+        <code>stage</code> is one of: {stages.map((s) => s.slug).join(', ')}.
+      </p>
+      <p>
+        <code>tags</code> come from a fixed list of {allTags.length}:{' '}
+        {allTags.join(', ')}. Adding a new one means changing{' '}
+        <code>data/schema.json</code> in the same pull request, and being able to explain
+        why the existing ones don't do the job.
+      </p>
+    </section>
+
+    <section style="margin-top:3rem">
+      <div class="section-rule">
+        <h2>Good first contributions</h2>
+        <span class="mono" style="margin-left:auto;color:var(--muted)">
+          {launchBacklog.names.length} names
+        </span>
+      </div>
+      <p class="prose-measure" style="color:var(--muted);margin-bottom:1rem">
+        {launchBacklog.note}
+      </p>
+      <div class="backlog">
+        {launchBacklog.names.map((name) => <span class="chip">{name}</span>)}
+      </div>
+    </section>
+
+    <section style="margin-top:3rem">
+      <div class="section-rule"><h2>Deliberately left out</h2></div>
+      <p class="prose-measure" style="color:var(--muted);margin-bottom:1.25rem">
+        {excludedFromSource.note}
+      </p>
+      {
+        excludedGroups.map((group) => {
+          const list = excludedFromSource[group.key];
+          if (!Array.isArray(list)) return null;
+          return (
+            <div class="excluded">
+              <h3 class="excluded__label">{group.label}</h3>
+              <p class="excluded__note">{group.note}</p>
+              <p class="excluded__items">{list.join(' · ')}</p>
+            </div>
+          );
+        })
+      }
+    </section>
+  </div>
+</Base>

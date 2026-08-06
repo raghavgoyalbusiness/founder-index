@@ -1,0 +1,137 @@
+name: Add a resource
+description: Suggest a tool, grant, programme or piece of reading for the directory.
+title: 'Add: '
+labels: ['new resource']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        If you're comfortable editing JSON, a pull request against `data/resources.json` is
+        faster and you get the credit in the file. This form is for when you'd rather not.
+
+        The bar: it has to solve a specific founder problem, and the description has to be
+        honest and short. If you haven't used it yourself, say so below — that's fine, it
+        just goes in flagged as unverified until someone confirms it.
+
+  - type: input
+    id: name
+    attributes:
+      label: Name
+      placeholder: SeedLegals
+    validations:
+      required: true
+
+  - type: input
+    id: url
+    attributes:
+      label: Link
+      placeholder: https://seedlegals.com/
+      description: Leave blank if you only know the name — we'll add it unverified.
+
+  - type: input
+    id: what
+    attributes:
+      label: What it does for you
+      description: >
+        Twelve words maximum, plain language, what it does *for the founder*. Not the
+        tool's own homepage copy. "UK funding rounds and SEIS/EIS paperwork", not
+        "the all-in-one platform to supercharge your fundraise".
+      placeholder: UK funding rounds and SEIS/EIS paperwork
+    validations:
+      required: true
+
+  - type: dropdown
+    id: stage
+    attributes:
+      label: Which stage
+      description: The moment a founder would need this. Pick the earliest one that fits.
+      options:
+        - explore — Is there a real problem here, and who already solves it?
+        - validate — Will anyone actually use this before I build it?
+        - build — How do I ship a working version this month?
+        - brand — How does it look, and does it look trustworthy?
+        - launch — Where do I put this so the first 100 people see it?
+        - grow — How do I find, convert and keep users repeatably?
+        - fund — Grants, angels, accelerators, or none of it?
+        - legal — How do I not blow myself up on paperwork?
+        - team — Co-founder, first hires, contractors, equity
+        - operate — The boring machinery that keeps days from vanishing
+        - learn — Playbooks, communities and people ahead of me
+        - exit — Acquiring a business, or getting out of one
+    validations:
+      required: true
+
+  - type: input
+    id: category
+    attributes:
+      label: Category
+      description: Groups it within the stage page. Reuse an existing one if it fits.
+      placeholder: Cap table
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: tags
+    attributes:
+      label: Tags
+      description: Everything that applies. Leave empty if none do.
+      options:
+        - label: free
+        - label: freemium
+        - label: paid
+        - label: uk
+        - label: us
+        - label: india
+        - label: asia
+        - label: europe
+        - label: canada
+        - label: global
+        - label: grant
+        - label: non-dilutive
+        - label: program
+        - label: community
+        - label: directory
+        - label: ai
+        - label: no-code
+        - label: open-source
+        - label: seo
+        - label: reading
+        - label: template
+        - label: agency
+        - label: b2b
+        - label: ecommerce
+        - label: enterprise
+        - label: research
+        - label: data
+        - label: pr
+        - label: affiliate
+        - label: mobile
+
+  - type: dropdown
+    id: used
+    attributes:
+      label: Have you used it?
+      options:
+        - Yes, on something real
+        - No — I've read about it or seen it recommended
+    validations:
+      required: true
+
+  - type: textarea
+    id: why
+    attributes:
+      label: Anything worth knowing
+      description: >
+        Optional. One or two sentences of first-hand context — what it was actually like,
+        where it fell down, who it isn't for. This is the most valuable part of an entry
+        and the part nobody else can write.
+
+  - type: checkboxes
+    id: rules
+    attributes:
+      label: Before you submit
+      options:
+        - label: I have no financial interest in this being listed, and nobody is paying me to suggest it.
+          required: true
+        - label: The description is my own words, not copied from the tool's marketing.
+          required: true

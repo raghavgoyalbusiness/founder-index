@@ -1,0 +1,118 @@
+---
+import Base from '~/layouts/Base.astro';
+import { totals, REPO } from '~/lib/data';
+---
+
+<Base
+  title="About"
+  description="Who made the Founder Index, why there is no paid placement, how entries get verified, and what licence the code and data are under."
+  nav="about"
+>
+  <div class="wrap">
+    <header class="page-head">
+      <p class="eyebrow">About</p>
+      <h1>A working notebook, opened up</h1>
+    </header>
+
+    <div class="prose">
+      <p class="lede">
+        This is a directory of {totals.entries} tools, grants, programmes and things worth
+        reading for people starting a company, organised by the stage you're at rather than
+        the software category the tool belongs to.
+      </p>
+
+      <h2>Why stages</h2>
+      <p>
+        A first-time founder does not know they need attribution software. They know
+        they've launched and nobody is coming back. Category-first directories assume you
+        already have the vocabulary for your problem, which is exactly what you don't have
+        the first time. So the organising principle here is the question you're actually
+        asking this week, and the answer is two or three resources rather than forty.
+      </p>
+      <p>
+        The twelve stages are a rough sequence, not a pipeline. Most people are in three of
+        them at once and going backwards is normal — you validate again after you launch,
+        you rebrand after you find the real customer.
+      </p>
+
+      <h2>Where it came from</h2>
+      <p>
+        It started as a running list of links accumulated over years of building things —
+        the kind of note that grows to hundreds of lines, half of it saved at 2am and never
+        opened again. Every entry was used or researched by someone building a real
+        company. That's the entire credibility claim, and it's why the design looks like a
+        notebook rather than a storefront.
+      </p>
+      <!--
+        PLACEHOLDER: replace with the real name, handle and one honest line about
+        who you are. An about page that won't say who wrote it is worth less than
+        one that does.
+      -->
+      <p>
+        Maintained in the open. The contributors are whoever has sent a pull request —
+        <a href={`${REPO}/graphs/contributors`} rel="noopener">the list is public</a>, like
+        everything else here.
+      </p>
+
+      <h2>No paid placement, ever</h2>
+      <p>
+        Nobody has paid to be in this directory, and nobody can. There is no sponsored
+        slot, no boosted position, no "featured" tier, and no arrangement where a tool gets
+        a better description because of who they are. Ordering is by how many entries a
+        category has, or by the order things were added — never by money.
+      </p>
+      <p>
+        If an affiliate or referral link is ever added, it gets an{' '}
+        <span class="chip chip--affiliate">affiliate link</span> chip on its card and its own
+        line in the repository README. Today there are none. You can verify that yourself:
+        the data is <a href={`${REPO}/blob/main/data/resources.json`} rel="noopener">one JSON file</a>,
+        and the git history shows every change ever made to it.
+      </p>
+
+      <h2>Honest about uncertainty</h2>
+      <p>
+        {totals.unverified} of the {totals.entries} entries carry an{' '}
+        <span class="chip chip--unverified">unverified</span> chip. That means the link or
+        the description was inferred from a name in the original notes and nobody has
+        confirmed it since. The tool might be misnamed, dead, or something other than what
+        we've assumed.
+      </p>
+      <p>
+        Those entries are shown, not hidden, because a guess labelled as a guess is more
+        useful than a gap. What they never do is pretend. An entry stops being unverified
+        when a human opens the link, confirms the description is true, and adds a{' '}
+        <code>lastChecked</code> date in a pull request.
+      </p>
+      <p>
+        A weekly job also pings every link and opens an issue listing anything that has
+        started returning an error. Dead links get removed or fixed, not quietly left to
+        rot.
+      </p>
+
+      <h2>How it's built</h2>
+      <p>
+        Astro, statically generated, deployed from <code>main</code>. No database, no
+        accounts, no server. The data lives in <code>data/resources.json</code> and CI
+        validates it on every commit — schema conformance, no duplicate links, no slug
+        collisions, and a hard fail on any description over twelve words.
+      </p>
+      <p>
+        There is deliberately no voting, no saved lists and no user accounts. All three
+        need moderation, and the repository already is the moderation layer.
+      </p>
+
+      <h2>Licence</h2>
+      <p>
+        The code is <a href={`${REPO}/blob/main/LICENSE`} rel="noopener">MIT</a>. The dataset
+        is <a href={`${REPO}/blob/main/DATA-LICENSE`} rel="noopener">CC BY 4.0</a> — take it,
+        build something better with it, just say where it came from. If you fork this into a
+        directory for a field I know nothing about, that's the best outcome available.
+      </p>
+
+      <p style="margin-top:2.5rem">
+        <a class="btn" href={REPO} rel="noopener" target="_blank">The repository</a>
+        <a class="btn btn--ghost" href="/submit" style="margin-left:0.5rem">Add a resource</a>
+      </p>
+    </div>
+  </div>
+</Base>

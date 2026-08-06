@@ -1,0 +1,115 @@
+---
+import Base from '~/layouts/Base.astro';
+import Card from '~/components/Card.astro';
+import { stacks } from '~/lib/data';
+
+export function getStaticPaths() {
+  return stacks.map((stack, i) => ({
+    params: { slug: stack.slug },
+    props: {
+      stack,
+      prev: stacks[i - 1] ?? null,
+      next: stacks[i + 1] ?? null,
+    },
+  }));
+}
+
+type StackWithEntries = (typeof stacks)[number];
+
+interface Props {
+  stack: StackWithEntries;
+  prev: StackWithEntries | null;
+  next: StackWithEntries | null;
+}
+
+const { stack, prev, next } = Astro.props;
+
+const stagesTouched = [...new Set(stack.entries.map((e) => e.stageRef.name))];
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: `${stack.title} — Founder Index`,
+  description: stack.for,
+  url: new URL(`/stacks/${stack.slug}`, Astro.site).href,
+  isPartOf: { '@type': 'WebSite', name: 'Founder Index', url: Astro.site?.href },
+  mainEntity: {
+    '@type': 'ItemList',
+    numberOfItems: stack.entries.length,
+    itemListElement: stack.entries.map((entry, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: entry.name,
+      description: entry.what,
+      url: new URL(entry.href, Astro.site).href,
+    })),
+  },
+};
+---
+
+<Base
+  title={stack.title}
+  description={`${stack.for} ${stack.entries.length} hand-picked resources, with the reasoning.`}
+  nav="stacks"
+  jsonLd={jsonLd}
+>
+  <div class="wrap">
+    <header class="page-head">
+      <p class="eyebrow">
+        <a href="/stacks" style="text-decoration:none">Stacks</a>
+      </p>
+      <h1>{stack.title}</h1>
+      <p class="lede prose-measure" style="margin-top:0.7rem">{stack.for}</p>
+    </header>
+
+    <div class="stack-detail">
+      <div class="stack-detail__reason">
+        <h2 class="eyebrow">The reasoning</h2>
+        <p>{stack.blurb}</p>
+        <dl class="stack-detail__meta">
+          <div>
+            <dt class="eyebrow">Resources</dt>
+            <dd class="mono">{stack.entries.length}</dd>
+          </div>
+          <div>
+            <dt class="eyebrow">Stages</dt>
+            <dd class="mono">{stagesTouched.length}</dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="stack-detail__items">
+        <div class="card-grid">
+          {
+            stack.entries.map((entry, i) => (
+              <Card entry={entry} showStage index={i + 1} />
+            ))
+          }
+        </div>
+      </div>
+    </div>
+
+    <nav class="stage-nav" aria-label="Stacks">
+      {
+        prev ? (
+          <a class="stage-nav__link" href={`/stacks/${prev.slug}`}>
+            <span class="eyebrow">← Previous</span>
+            <span class="stage-nav__name">{prev.title}</span>
+          </a>
+        ) : (
+          <span />
+        )
+      }
+      {
+        next ? (
+          <a class="stage-nav__link stage-nav__link--next" href={`/stacks/${next.slug}`}>
+            <span class="eyebrow">Next →</span>
+            <span class="stage-nav__name">{next.title}</span>
+          </a>
+        ) : (
+          <span />
+        )
+      }
+    </nav>
+  </div>
+</Base>

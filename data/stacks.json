@@ -1,0 +1,88 @@
+[
+  {
+    "slug": "zero-budget",
+    "title": "Zero-budget stack",
+    "for": "You have a laptop, no money, and something you want to put in front of people.",
+    "blurb": "Every tool here has a free tier you can build a real product on, not a trial that expires in fourteen days. The trap at this stage is spending three weeks choosing infrastructure for a product nobody has asked for yet — so this stack is deliberately boring in the places that don't matter. Take the free model credits, put the database somewhere that scales to zero, and spend the saved money on nothing at all. You will know within a month whether it deserves a budget.",
+    "items": [
+      "Google AI Studio",
+      "OpenRouter",
+      "Neon",
+      "21st.dev",
+      "draw.io",
+      "Photopea",
+      "Obsidian",
+      "Trello",
+      "Indie Hackers"
+    ]
+  },
+  {
+    "slug": "uk-first-month",
+    "title": "UK founder's first month",
+    "for": "You have registered a company in the UK, or you are about to.",
+    "blurb": "The UK is unusually generous to early companies if you do the paperwork in the right order, and unusually punishing if you don't. Get SEIS advance assurance before you take anyone's money, not after — investors will ask, and doing it retroactively is where founders lose rounds. Read the equity guides before you promise a co-founder a number. Innovate UK is the one that surprises people: it is real money that costs you no equity, and the applications are long but not hard.",
+    "items": [
+      "Carta — SEIS guide",
+      "Carta — SEIS/EIS advance assurance",
+      "SeedLegals",
+      "Vestd guides",
+      "Cooley GO",
+      "Innovate UK",
+      "SeedLegals Termometer",
+      "Hotbed",
+      "Kickstart Global"
+    ]
+  },
+  {
+    "slug": "solo-ai-builder",
+    "title": "Solo AI builder",
+    "for": "One person shipping something with a model behind it.",
+    "blurb": "The cost of an AI product is inference, and the cost of inference is now close to zero if you are willing to route around the default. Prototype against free tiers, keep a local model for the work that doesn't need a frontier one, and only reach for a paid API when a real user is waiting on the response. The components matter more than they look — most of the time you lose as a solo builder goes into rebuilding a dropdown, and none of that is the product.",
+    "items": [
+      "Google AI Studio",
+      "OpenRouter",
+      "Groq",
+      "Ollama",
+      "fal.ai grants",
+      "Neon",
+      "Magic Patterns",
+      "21st.dev",
+      "React Bits"
+    ]
+  },
+  {
+    "slug": "launch-week",
+    "title": "Launch week",
+    "for": "The thing works and nobody knows it exists.",
+    "blurb": "Launching is not one day, it is about nine posts over two weeks, and the order matters. Warm up somewhere forgiving first — Indie Hackers or a Show HN — so the feedback lands before the big one. Product Hunt rewards preparation and punishes improvisation, so pick the date early and line the rest up behind it. The alternative-to listings are the quiet winner here: they do nothing on the day and then send you traffic for two years.",
+    "items": [
+      "Indie Hackers",
+      "Hacker News — Show HN",
+      "BetaList",
+      "Product Hunt",
+      "Peerlist",
+      "Uneed",
+      "DevHunt",
+      "AlternativeTo",
+      "Qwoted"
+    ]
+  },
+  {
+    "slug": "pre-revenue-fundraise",
+    "title": "Pre-revenue fundraise",
+    "for": "You are raising before you have meaningful revenue to point at.",
+    "blurb": "Without revenue, the round is sold on the team, the wedge, and evidence you can move quickly — which means your materials carry more weight than they will ever carry again. Benchmark the terms before the first call so you can tell a normal offer from a bad one. And exhaust the non-dilutive money first: a grant or a fellowship is the only funding that improves your position rather than diluting it, and both look better on the cap table than a rushed angel round.",
+    "items": [
+      "Innovate UK",
+      "Entrepreneur First",
+      "Z Fellows",
+      "Slidebean startup resources",
+      "Pitch",
+      "SeedLegals Termometer",
+      "Carta — SEIS/EIS advance assurance",
+      "UK consumer VCs — DMG Ventures guide",
+      "Connectd",
+      "AngelList"
+    ]
+  }
+]

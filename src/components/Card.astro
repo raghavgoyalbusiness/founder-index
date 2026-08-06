@@ -1,0 +1,59 @@
+---
+/**
+ * A resource card. Quiet on purpose: name, one line, tags, a link.
+ * No logos, no ratings, no badges. The whole card is a click target for the
+ * tool page; the arrow is a separate, smaller target that leaves the site.
+ */
+import type { Entry } from '~/lib/data';
+
+interface Props {
+  entry: Entry;
+  /** Show which stage this belongs to — used off the stage pages. */
+  showStage?: boolean;
+  /** Ordinal, for stacks. */
+  index?: number;
+}
+
+const { entry, showStage = false, index } = Astro.props;
+---
+
+<article class="card" data-tags={entry.tags.join(' ')} data-name={entry.name}>
+  <div style="display:flex;align-items:flex-start;gap:0.6rem">
+    <h3 class="card__name" style="flex:1;min-width:0">
+      {index !== undefined && <span class="card__ord">{String(index).padStart(2, '0')}</span>}
+      <a class="card__link" href={entry.href}>{entry.name}</a>
+    </h3>
+
+    {
+      entry.url && (
+        <a
+          class="card__out"
+          href={entry.url}
+          rel="noopener nofollow"
+          target="_blank"
+          aria-label={`Open ${entry.name} in a new tab`}
+          title={entry.host ?? entry.url}
+        >
+          <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+            <path
+              d="M4 2h6v6M10 2 2.5 9.5"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.4"
+              stroke-linecap="round"
+              stroke-linejoin="round"></path>
+          </svg>
+        </a>
+      )
+    }
+  </div>
+
+  <p class="card__what">{entry.what}</p>
+
+  <div class="card__meta">
+    {showStage && <span class="chip chip--stage">{entry.stageRef.name}</span>}
+    {entry.verify && <span class="chip chip--unverified">unverified</span>}
+    {entry.affiliate && <span class="chip chip--affiliate">affiliate link</span>}
+    {entry.tags.map((tag) => <a class="chip" href={`/tag/${tag}`}>{tag}</a>)}
+  </div>
+</article>

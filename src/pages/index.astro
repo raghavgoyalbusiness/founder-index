@@ -1,0 +1,141 @@
+---
+import Base from '~/layouts/Base.astro';
+import Search from '~/components/Search.tsx';
+import { stages, stageCounts, stacks, totals, tagCounts } from '~/lib/data';
+
+const pad = (n: number) => String(n).padStart(2, '0');
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Founder Index',
+  url: Astro.site?.href,
+  description:
+    'An open-source directory of tools, grants, programmes and reading for people starting a company, organised by stage rather than by category.',
+  license: 'https://creativecommons.org/licenses/by/4.0/',
+};
+
+const topTags = tagCounts.slice(0, 12);
+---
+
+<Base
+  title="Founder Index — startup resources by stage, not by category"
+  description={`${totals.entries} tools, grants, programmes and things worth reading for people starting a company. Organised by the stage you are at. Open source, no paid placement.`}
+  nav="stages"
+  jsonLd={jsonLd}
+  bareTitle
+>
+  <section class="wrap hero">
+    <p class="eyebrow">Open source · No paid placement, ever</p>
+    <h1 class="hero__title">
+      Everything you need,<br />in the order you'll need it<span class="hero__dot">.</span>
+    </h1>
+    <p class="lede prose-measure hero__lede">
+      The tools, grants, programmes and reading that actually helped someone build a
+      company — sorted by the problem you have this week.
+    </p>
+  </section>
+
+  <section class="wrap" aria-labelledby="stages-heading">
+    <div class="section-rule">
+      <h2 id="stages-heading" class="eyebrow" style="letter-spacing:0.14em">The twelve stages</h2>
+      <span class="mono" style="margin-left:auto;color:var(--muted)">
+        {totals.entries} resources
+      </span>
+    </div>
+
+    <nav class="index" aria-label="Browse by stage">
+      {
+        stages.map((stage, i) => (
+          <a class="index__row" href={`/stage/${stage.slug}`} style={`--i:${i}`}>
+            <span class="index__num" aria-hidden="true">
+              {pad(i + 1)}
+            </span>
+            <span class="index__name">{stage.name}</span>
+            <span class="index__q">{stage.question}</span>
+            <span class="index__count">
+              {stageCounts[stage.slug]}
+              <span class="sr-only-focusable"> resources</span>
+            </span>
+          </a>
+        ))
+      }
+    </nav>
+
+    <p class="index-note">
+      Stages are a rough sequence, not a pipeline. Most founders are in three of them at
+      once, and going backwards is normal.
+    </p>
+  </section>
+
+  <section class="wrap home-search" aria-labelledby="search-heading">
+    <div class="section-rule">
+      <h2 id="search-heading" class="eyebrow" style="letter-spacing:0.14em">
+        Or search the lot
+      </h2>
+    </div>
+    <Search client:idle mode="inline" />
+    <div class="home-search__tags">
+      {topTags.map((t) => (
+        <a class="chip" href={`/tag/${t.tag}`}>
+          {t.tag} <span style="opacity:0.6">{t.count}</span>
+        </a>
+      ))}
+      <a class="chip" href="/tags">all {totals.tags} tags →</a>
+    </div>
+  </section>
+
+  <section class="wrap" aria-labelledby="stacks-heading">
+    <div class="section-rule">
+      <h2 id="stacks-heading" class="eyebrow" style="letter-spacing:0.14em">Stacks</h2>
+      <a class="mono" href="/stacks" style="margin-left:auto;text-decoration:none"
+        >All {totals.stacks} →</a
+      >
+    </div>
+    <p class="prose-measure" style="color:var(--muted);margin-bottom:1.1rem">
+      Hand-picked bundles for a specific situation, with the reasoning attached.
+    </p>
+    <div class="stack-grid">
+      {
+        stacks.map((stack) => (
+          <a class="stack-card" href={`/stacks/${stack.slug}`}>
+            <h3 class="stack-card__title">{stack.title}</h3>
+            <p class="stack-card__for">{stack.for}</p>
+            <span class="mono stack-card__count">{stack.entries.length} resources</span>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="wrap" aria-labelledby="what-heading">
+    <div class="section-rule">
+      <h2 id="what-heading" class="eyebrow" style="letter-spacing:0.14em">What this is</h2>
+    </div>
+    <div class="prose prose-measure">
+      <p>
+        Most directories file things by software category, which only works if you already
+        have the vocabulary for your problem. You don't know you need attribution software.
+        You know you launched and nobody is coming back. So this is filed by the question
+        instead, and the answer is two or three things rather than forty.
+      </p>
+      <p>
+        It started as a messy running list of links — the kind you accumulate over years of
+        building things, half of it saved at 2am and never opened again. Every entry was
+        used or researched by someone building a real company. That's the whole credibility
+        claim. It is a working notebook, opened up.
+      </p>
+      <p>
+        There is no paid placement and there never will be. The data is a JSON file in a
+        public repo, so if something is wrong you can fix it yourself, and if a tool wants
+        in it has to earn it the same way as everything else. {totals.unverified} of the{' '}
+        {totals.entries} entries carry an <strong>unverified</strong> chip, which means
+        nobody has confirmed the link or the description yet — those are the best place to
+        start if you want to help.
+      </p>
+      <p>
+        <a href="/submit">Add a resource</a> · <a href="/about">How this works</a>
+      </p>
+    </div>
+  </section>
+</Base>

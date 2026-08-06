@@ -1,0 +1,91 @@
+---
+import Base from '~/layouts/Base.astro';
+import Card from '~/components/Card.astro';
+import { allTags, entriesWithTag, stages } from '~/lib/data';
+
+export function getStaticPaths() {
+  // Every tag in the schema gets a page, including any that nothing carries
+  // yet — an empty one is a direction to contribute, not a dead end.
+  return allTags.map((tag) => ({ params: { tag }, props: { tag } }));
+}
+
+interface Props {
+  tag: string;
+}
+
+const { tag } = Astro.props;
+const items = entriesWithTag(tag);
+
+const byStage = stages
+  .map((stage) => ({ stage, items: items.filter((e) => e.stage === stage.slug) }))
+  .filter((group) => group.items.length > 0);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: `Everything tagged ${tag} — Founder Index`,
+  url: new URL(`/tag/${tag}`, Astro.site).href,
+  isPartOf: { '@type': 'WebSite', name: 'Founder Index', url: Astro.site?.href },
+  mainEntity: {
+    '@type': 'ItemList',
+    numberOfItems: items.length,
+    itemListElement: items.map((entry, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: entry.name,
+      description: entry.what,
+      url: new URL(entry.href, Astro.site).href,
+    })),
+  },
+};
+---
+
+<Base
+  title={`Tagged “${tag}”`}
+  description={`${items.length} startup resources tagged ${tag}, across ${byStage.length} stages of building a company.`}
+  jsonLd={jsonLd}
+>
+  <div class="wrap">
+    <header class="page-head">
+      <p class="eyebrow">
+        <a href="/tags" style="text-decoration:none">Tags</a>
+      </p>
+      <h1><span class="tag-hash">#</span>{tag}</h1>
+      <p class="lede prose-measure" style="margin-top:0.7rem">
+        {
+          items.length > 0
+            ? `${items.length} ${items.length === 1 ? 'resource' : 'resources'} across ${byStage.length} ${byStage.length === 1 ? 'stage' : 'stages'}.`
+            : 'Nothing carries this tag yet.'
+        }
+      </p>
+    </header>
+
+    {
+      items.length === 0 ? (
+        <p class="empty" style="padding-left:0">
+          Nothing here yet — <a href="/submit">add the first one</a>.
+        </p>
+      ) : (
+        byStage.map((group) => (
+          <section class="cat">
+            <div class="section-rule">
+              <h2>
+                <a href={`/stage/${group.stage.slug}`} style="text-decoration:none">
+                  {group.stage.name}
+                </a>
+              </h2>
+              <span class="mono" style="color:var(--muted)">
+                {group.items.length}
+              </span>
+            </div>
+            <div class="card-grid">
+              {group.items.map((entry) => (
+                <Card entry={entry} />
+              ))}
+            </div>
+          </section>
+        ))
+      )
+    }
+  </div>
+</Base>

@@ -1,0 +1,62 @@
+[
+  {
+    "slug": "explore",
+    "name": "Explore the idea",
+    "question": "Is there a real problem here, and who already solves it?"
+  },
+  {
+    "slug": "validate",
+    "name": "Validate with people",
+    "question": "Will anyone actually use this before I build it?"
+  },
+  {
+    "slug": "build",
+    "name": "Build the thing",
+    "question": "How do I ship a working version this month?"
+  },
+  {
+    "slug": "brand",
+    "name": "Brand and design",
+    "question": "How does it look, and does it look trustworthy?"
+  },
+  {
+    "slug": "launch",
+    "name": "Launch it",
+    "question": "Where do I put this so the first 100 people see it?"
+  },
+  {
+    "slug": "grow",
+    "name": "Get customers",
+    "question": "How do I find, convert and keep users repeatably?"
+  },
+  {
+    "slug": "fund",
+    "name": "Raise money",
+    "question": "Grants, angels, accelerators, or none of it?"
+  },
+  {
+    "slug": "legal",
+    "name": "Legal, tax and money",
+    "question": "How do I not blow myself up on paperwork?"
+  },
+  {
+    "slug": "team",
+    "name": "Build a team",
+    "question": "Co-founder, first hires, contractors, equity."
+  },
+  {
+    "slug": "operate",
+    "name": "Run the company",
+    "question": "The boring machinery that keeps days from vanishing."
+  },
+  {
+    "slug": "learn",
+    "name": "Learn and connect",
+    "question": "Playbooks, communities and people ahead of me."
+  },
+  {
+    "slug": "exit",
+    "name": "Sell or buy",
+    "question": "Acquiring a business, or getting out of one."
+  }
+]

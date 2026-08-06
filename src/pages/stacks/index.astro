@@ -1,0 +1,40 @@
+---
+import Base from '~/layouts/Base.astro';
+import { stacks, totals } from '~/lib/data';
+---
+
+<Base
+  title="Stacks"
+  description={`${totals.stacks} hand-picked bundles of startup resources for a specific situation — zero budget, a UK first month, a solo AI build, a launch week, a pre-revenue raise.`}
+  nav="stacks"
+>
+  <div class="wrap">
+    <header class="page-head">
+      <p class="eyebrow">Curated</p>
+      <h1>Stacks</h1>
+      <p class="lede prose-measure" style="margin-top:0.7rem">
+        A stage page gives you everything. A stack gives you the six to ten things that go
+        together for one specific situation, and the reasoning for why those and not the
+        others. Start here if you'd rather be told than browse.
+      </p>
+    </header>
+
+    <div class="stack-list">
+      {
+        stacks.map((stack, i) => (
+          <a class="stack-row" href={`/stacks/${stack.slug}`} style={`--i:${i}`}>
+            <span class="stack-row__num mono">{String(i + 1).padStart(2, '0')}</span>
+            <span class="stack-row__body">
+              <span class="stack-row__title">{stack.title}</span>
+              <span class="stack-row__for">{stack.for}</span>
+              <span class="stack-row__names">
+                {stack.entries.map((e) => e.name).join(' · ')}
+              </span>
+            </span>
+            <span class="stack-row__count mono">{stack.entries.length}</span>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</Base>

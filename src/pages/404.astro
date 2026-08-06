@@ -1,0 +1,34 @@
+---
+import Base from '~/layouts/Base.astro';
+import { stages, stageCounts } from '~/lib/data';
+
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<Base title="Not found" description="That page doesn't exist. Here are the twelve stages instead.">
+  <div class="wrap">
+    <header class="page-head">
+      <p class="eyebrow">404</p>
+      <h1>That isn't here</h1>
+      <p class="lede prose-measure" style="margin-top:0.7rem">
+        Either it moved or it never existed. Both are fixable — if you followed a link from
+        somewhere on this site, that's a bug worth reporting. Otherwise, start from a stage.
+      </p>
+    </header>
+
+    <nav class="index" aria-label="Browse by stage">
+      {
+        stages.map((stage, i) => (
+          <a class="index__row" href={`/stage/${stage.slug}`} style={`--i:${i}`}>
+            <span class="index__num" aria-hidden="true">
+              {pad(i + 1)}
+            </span>
+            <span class="index__name">{stage.name}</span>
+            <span class="index__q">{stage.question}</span>
+            <span class="index__count">{stageCounts[stage.slug]}</span>
+          </a>
+        ))
+      }
+    </nav>
+  </div>
+</Base>

@@ -1,0 +1,146 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/founder-index/founder-index/data/schema.json",
+  "title": "Founder Index resources",
+  "description": "Every resource in the directory. One object per entry. Validated in CI on every commit — see scripts/validate.mjs for the rules a schema cannot express (word count, duplicate URLs, slug collisions).",
+  "type": "array",
+  "items": { "$ref": "#/definitions/resource" },
+  "definitions": {
+    "resource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "what", "stage", "category", "tags"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 60,
+          "description": "What the thing is called. Must be unique across the file."
+        },
+        "url": {
+          "type": "string",
+          "description": "Canonical link. Required unless verify is true — an entry nobody has confirmed may sit here without one.",
+          "anyOf": [
+            { "format": "uri", "pattern": "^https?://" },
+            { "const": "" }
+          ]
+        },
+        "what": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 90,
+          "description": "What it does for you, in plain words, in twelve words or fewer. Never marketing copy from the tool's own homepage."
+        },
+        "stage": {
+          "type": "string",
+          "description": "Which stage of the journey this belongs to.",
+          "enum": [
+            "explore",
+            "validate",
+            "build",
+            "brand",
+            "launch",
+            "grow",
+            "fund",
+            "legal",
+            "team",
+            "operate",
+            "learn",
+            "exit"
+          ]
+        },
+        "category": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40,
+          "description": "Free text. Groups cards within a stage page. Reuse an existing category where one fits."
+        },
+        "tags": {
+          "type": "array",
+          "uniqueItems": true,
+          "description": "Cross-cutting filters. May be empty. New tags need a pull request that adds them here first.",
+          "items": {
+            "type": "string",
+            "enum": [
+              "free",
+              "freemium",
+              "paid",
+              "uk",
+              "us",
+              "india",
+              "asia",
+              "europe",
+              "canada",
+              "global",
+              "grant",
+              "non-dilutive",
+              "program",
+              "community",
+              "directory",
+              "ai",
+              "no-code",
+              "open-source",
+              "seo",
+              "reading",
+              "template",
+              "agency",
+              "b2b",
+              "ecommerce",
+              "enterprise",
+              "research",
+              "data",
+              "pr",
+              "affiliate",
+              "mobile"
+            ]
+          }
+        },
+        "verify": {
+          "type": "boolean",
+          "description": "True when nobody has confirmed the link or the description. Renders as a muted 'unverified' chip. Never quietly present a guess as a fact."
+        },
+        "why": {
+          "type": "string",
+          "maxLength": 400,
+          "description": "Optional one or two sentences of first-hand context. Why you reached for it, what it was actually like."
+        },
+        "alternatives": {
+          "type": "array",
+          "uniqueItems": true,
+          "description": "Names of other entries in this file that do a similar job.",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "addedBy": {
+          "type": "string",
+          "maxLength": 39,
+          "pattern": "^[A-Za-z0-9-]+$",
+          "description": "GitHub handle of the contributor, without the @."
+        },
+        "lastChecked": {
+          "type": "string",
+          "format": "date",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+          "description": "ISO date the link and description were last confirmed by a human."
+        },
+        "affiliate": {
+          "type": "boolean",
+          "description": "True if the url carries an affiliate or referral code. There is no paid placement here, but if a link ever pays us it must say so on the card. See About."
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "anyOf": [
+              { "not": { "required": ["verify"] } },
+              { "properties": { "verify": { "const": false } } }
+            ]
+          },
+          "then": {
+            "required": ["url"],
+            "properties": { "url": { "minLength": 1 } }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,19 @@
+# build output
+dist/
+.astro/
+
+# dependencies
+node_modules/
+
+# generated
+link-report.md
+
+# environment
+.env
+.env.production
+
+# editors and os
+.DS_Store
+.vscode/
+.idea/
+*.log

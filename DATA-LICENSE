@@ -1,0 +1,26 @@
+# Data licence
+
+The dataset in `data/` — `resources.json`, `stages.json`, `stacks.json`, `backlog.json` and
+`excluded.json` — is licensed under a Creative Commons Attribution 4.0 International licence
+(CC BY 4.0).
+
+https://creativecommons.org/licenses/by/4.0/
+
+## You are free to
+
+- **Share** — copy and redistribute the data in any medium or format
+- **Adapt** — remix, transform, and build upon it, for any purpose, including commercially
+
+## Under one condition
+
+- **Attribution** — credit "Founder Index" with a link back to the repository, indicate
+  whether you changed anything, and don't imply this project endorses you or your use.
+
+## Worth knowing before you build on it
+
+Around a quarter of the entries carry `"verify": true`, which means nobody has confirmed the
+link or the description. They were inferred from a name in a set of private notes. If you
+reuse this data, carry that flag through and show it to your users — presenting an unverified
+guess as a checked fact is the one thing this project is trying not to do.
+
+The code that renders the site is separately licensed under MIT. See `LICENSE`.

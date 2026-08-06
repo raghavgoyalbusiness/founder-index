@@ -1,0 +1,205 @@
+---
+import Base from '~/layouts/Base.astro';
+import Card from '~/components/Card.astro';
+import {
+  stages,
+  entriesInStage,
+  groupByCategory,
+  tagsInStage,
+  type Stage,
+} from '~/lib/data';
+
+export function getStaticPaths() {
+  return stages.map((stage, i) => ({
+    params: { slug: stage.slug },
+    props: {
+      stage,
+      position: i + 1,
+      prev: stages[i - 1] ?? null,
+      next: stages[i + 1] ?? null,
+    },
+  }));
+}
+
+interface Props {
+  stage: Stage;
+  position: number;
+  prev: Stage | null;
+  next: Stage | null;
+}
+
+const { stage, position, prev, next } = Astro.props;
+
+const items = entriesInStage(stage.slug);
+const groups = groupByCategory(items);
+const tags = tagsInStage(stage.slug);
+const pad = (n: number) => String(n).padStart(2, '0');
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: `${stage.name} — Founder Index`,
+  description: stage.question,
+  url: new URL(`/stage/${stage.slug}`, Astro.site).href,
+  isPartOf: { '@type': 'WebSite', name: 'Founder Index', url: Astro.site?.href },
+  mainEntity: {
+    '@type': 'ItemList',
+    numberOfItems: items.length,
+    itemListElement: items.map((entry, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: entry.name,
+      description: entry.what,
+      url: new URL(entry.href, Astro.site).href,
+    })),
+  },
+};
+---
+
+<Base
+  title={stage.name}
+  description={`${stage.question} — ${items.length} tools, programmes and things worth reading for the ${stage.name.toLowerCase()} stage.`}
+  spine={stage.slug}
+  jsonLd={jsonLd}
+>
+  <div class="wrap">
+    <header class="page-head">
+      <p class="eyebrow">
+        <a href="/" style="text-decoration:none">Stages</a> · {pad(position)} of {
+          pad(stages.length)
+        }
+      </p>
+      <h1>{stage.name}</h1>
+      <p class="lede prose-measure" style="margin-top:0.7rem">{stage.question}</p>
+    </header>
+
+    {
+      tags.length > 0 && (
+        <div class="filters" data-filters>
+          <span class="eyebrow" style="margin-right:0.35rem">Filter</span>
+          <button type="button" class="chip is-on" data-tag="" aria-pressed="true">
+            everything <span style="opacity:0.6">{items.length}</span>
+          </button>
+          {tags.map((t) => (
+            <a
+              class="chip"
+              href={`/tag/${t.tag}`}
+              data-tag={t.tag}
+              aria-pressed="false"
+              data-count={t.count}
+            >
+              {t.tag} <span style="opacity:0.6">{t.count}</span>
+            </a>
+          ))}
+        </div>
+      )
+    }
+
+    <div data-results>
+      {
+        groups.map((group) => (
+          <section class="cat" data-group={group.category} aria-labelledby={`c-${group.category}`}>
+            <div class="section-rule">
+              <h2 id={`c-${group.category}`}>{group.category}</h2>
+              <span class="mono" style="color:var(--muted)" data-group-count>
+                {group.items.length}
+              </span>
+            </div>
+            <div class="card-grid">
+              {group.items.map((entry) => (
+                <Card entry={entry} />
+              ))}
+            </div>
+          </section>
+        ))
+      }
+    </div>
+
+    <p class="empty" data-empty hidden>
+      Nothing in this stage carries that tag yet. <a href="/submit">Add the first one</a>.
+    </p>
+
+    <nav class="stage-nav" aria-label="Stages">
+      {
+        prev ? (
+          <a class="stage-nav__link" href={`/stage/${prev.slug}`}>
+            <span class="eyebrow">← Previous</span>
+            <span class="stage-nav__name">{prev.name}</span>
+          </a>
+        ) : (
+          <span />
+        )
+      }
+      {
+        next ? (
+          <a class="stage-nav__link stage-nav__link--next" href={`/stage/${next.slug}`}>
+            <span class="eyebrow">Next →</span>
+            <span class="stage-nav__name">{next.name}</span>
+          </a>
+        ) : (
+          <span />
+        )
+      }
+    </nav>
+  </div>
+</Base>
+
+<script>
+  // Progressive enhancement: the chips are real links to /tag/<tag> and work
+  // with JS off. With JS on they filter in place instead, which keeps you in
+  // the stage you were reading.
+  const bar = document.querySelector<HTMLElement>('[data-filters]');
+  if (bar) {
+    const cards = Array.from(document.querySelectorAll<HTMLElement>('.card[data-tags]'));
+    const groups = Array.from(document.querySelectorAll<HTMLElement>('[data-group]'));
+    const empty = document.querySelector<HTMLElement>('[data-empty]');
+    const chips = Array.from(bar.querySelectorAll<HTMLElement>('[data-tag]'));
+
+    const apply = (tag: string, push: boolean) => {
+      let shown = 0;
+
+      for (const card of cards) {
+        const tags = (card.dataset.tags || '').split(' ').filter(Boolean);
+        const match = !tag || tags.includes(tag);
+        card.hidden = !match;
+        if (match) shown++;
+      }
+
+      for (const group of groups) {
+        const visible = group.querySelectorAll('.card:not([hidden])').length;
+        group.hidden = visible === 0;
+        const count = group.querySelector('[data-group-count]');
+        if (count) count.textContent = String(visible);
+      }
+
+      for (const chip of chips) {
+        const on = (chip.dataset.tag || '') === tag;
+        chip.setAttribute('aria-pressed', String(on));
+        chip.classList.toggle('is-on', on);
+      }
+
+      if (empty) empty.hidden = shown > 0;
+
+      if (push) {
+        const url = new URL(window.location.href);
+        if (tag) url.searchParams.set('tag', tag);
+        else url.searchParams.delete('tag');
+        history.replaceState({}, '', url);
+      }
+    };
+
+    bar.addEventListener('click', (event) => {
+      const target = (event.target as HTMLElement).closest<HTMLElement>('[data-tag]');
+      if (!target) return;
+      // let modified clicks open the real tag page
+      const mouse = event as MouseEvent;
+      if (mouse.metaKey || mouse.ctrlKey || mouse.shiftKey || mouse.altKey) return;
+      event.preventDefault();
+      const next = target.getAttribute('aria-pressed') === 'true' ? '' : target.dataset.tag || '';
+      apply(next, true);
+    });
+
+    const initial = new URL(window.location.href).searchParams.get('tag');
+    if (initial) apply(initial, false);
+  }
+</script>
