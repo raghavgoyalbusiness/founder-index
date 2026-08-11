@@ -10,6 +10,7 @@
     "start": "astro dev --port 5187",
     "build": "node scripts/validate.mjs && astro build",
     "preview": "astro preview --port 5187",
+    "deploy": "bash scripts/deploy-pages.sh",
     "validate": "node scripts/validate.mjs",
     "check-links": "node scripts/check-links.mjs",
     "seed": "node scripts/seed.mjs",

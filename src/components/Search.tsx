@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import type { KeyboardEvent as ReactKeyboardEvent, ReactNode, RefObject } from 'react';
+import { u } from '~/lib/url';
 
 /**
  * Search, in two shapes.
@@ -31,7 +32,7 @@ let cache: Promise<Loaded> | null = null;
 function loadIndex(): Promise<Loaded> {
   if (!cache) {
     cache = Promise.all([
-      fetch('/search-index.json').then((r) => r.json() as Promise<Doc[]>),
+      fetch(u('/search-index.json')).then((r) => r.json() as Promise<Doc[]>),
       import('fuse.js'),
     ]).then(([docs, mod]) => {
       const Fuse = mod.default;
@@ -158,7 +159,7 @@ function Results({
       <div className="results">
         <p className="empty">
           Nothing matches “{query.trim()}”. It might not be here yet —{' '}
-          <a href="/submit" style={{ color: 'var(--signal)' }}>
+          <a href={u('/submit')} style={{ color: 'var(--signal)' }}>
             add it
           </a>
           .
@@ -172,7 +173,7 @@ function Results({
       {results.map((doc, i) => (
         <a
           key={doc.h}
-          href={doc.h}
+          href={u(doc.h)}
           className="result"
           role="option"
           id={`${listId}-${i}`}
@@ -276,7 +277,7 @@ export default function Search({ mode }: { mode: 'inline' | 'palette' }) {
 
   const navigate = (i: number) => {
     const doc = results[i];
-    if (doc) window.location.href = doc.h;
+    if (doc) window.location.href = u(doc.h);
   };
 
   const onKeyDown = (e: ReactKeyboardEvent<HTMLInputElement>) => {

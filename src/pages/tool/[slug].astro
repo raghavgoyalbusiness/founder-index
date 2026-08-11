@@ -2,6 +2,7 @@
 import Base from '~/layouts/Base.astro';
 import Card from '~/components/Card.astro';
 import { entries, related, alternativesOf, REPO, type Entry } from '~/lib/data';
+import { u } from '~/lib/url';
 
 export function getStaticPaths() {
   return entries.map((entry) => ({ params: { slug: entry.slug }, props: { entry } }));
@@ -71,8 +72,8 @@ const jsonLd = [
       <div class="tool__top">
       <header class="page-head">
         <p class="eyebrow">
-          <a href="/" style="text-decoration:none">Stages</a> ·{' '}
-          <a href={`/stage/${entry.stage}`} style="text-decoration:none">
+          <a href={u('/')} style="text-decoration:none">Stages</a> ·{' '}
+          <a href={u(`/stage/${entry.stage}`)} style="text-decoration:none">
             {entry.stageRef.name}
           </a> · {entry.category}
         </p>
@@ -126,7 +127,7 @@ const jsonLd = [
         <dl class="facts">
         <div class="facts__row">
           <dt>Stage</dt>
-          <dd><a href={`/stage/${entry.stage}`}>{entry.stageRef.name}</a></dd>
+          <dd><a href={u(`/stage/${entry.stage}`)}>{entry.stageRef.name}</a></dd>
         </div>
         <div class="facts__row">
           <dt>Category</dt>
@@ -139,7 +140,7 @@ const jsonLd = [
               entry.tags.length ? (
                 <span class="facts__tags">
                   {entry.tags.map((tag) => (
-                    <a class="chip" href={`/tag/${tag}`}>
+                    <a class="chip" href={u(`/tag/${tag}`)}>
                       {tag}
                     </a>
                   ))}
@@ -213,7 +214,7 @@ const jsonLd = [
             <a
               class="mono"
               style="margin-left:auto;text-decoration:none"
-              href={`/stage/${entry.stage}`}
+              href={u(`/stage/${entry.stage}`)}
             >
               All →
             </a>

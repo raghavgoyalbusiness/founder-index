@@ -1,6 +1,7 @@
 ---
 import Base from '~/layouts/Base.astro';
 import { stacks, totals } from '~/lib/data';
+import { u } from '~/lib/url';
 ---
 
 <Base
@@ -27,7 +28,7 @@ import { stacks, totals } from '~/lib/data';
         stacks.map((stack, i) => {
           const stagesTouched = new Set(stack.entries.map((e) => e.stage)).size;
           return (
-            <a class="stack-row" href={`/stacks/${stack.slug}`} style={`--i:${i}`}>
+            <a class="stack-row" href={u(`/stacks/${stack.slug}`)} style={`--i:${i}`}>
               <span class="stack-row__body">
                 <span class="stack-row__title">{stack.title}</span>
                 <span class="stack-row__for">{stack.for}</span>

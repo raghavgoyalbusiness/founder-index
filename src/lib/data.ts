@@ -190,6 +190,5 @@ export const totals = {
 };
 
 /** The repo the site is generated from. Used for edit links, issue templates
- *  and the "report a broken link" button.
- *  PLACEHOLDER: point this at the real repository before launch. */
-export const REPO = 'https://github.com/founder-index/founder-index';
+ *  and the "report a broken link" button. Change this if you fork. */
+export const REPO = 'https://github.com/raghavgoyalbusiness/founder-index';

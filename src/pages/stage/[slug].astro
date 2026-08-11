@@ -9,6 +9,7 @@ import {
   type Stage,
 } from '~/lib/data';
 import { slugify } from '~/lib/text.js';
+import { u } from '~/lib/url';
 
 export function getStaticPaths() {
   return stages.map((stage, i) => ({
@@ -81,7 +82,7 @@ const jsonLd = {
   <div class="wrap">
     <header class="page-head">
       <p class="eyebrow">
-        <a href="/" style="text-decoration:none">Stages</a> · {pad(position)} of {
+        <a href={u('/')} style="text-decoration:none">Stages</a> · {pad(position)} of {
           pad(stages.length)
         }
       </p>
@@ -126,7 +127,7 @@ const jsonLd = {
             {tags.map((t) => (
               <a
                 class="chip"
-                href={`/tag/${t.tag}`}
+                href={u(`/tag/${t.tag}`)}
                 data-tag={t.tag}
                 aria-pressed="false"
                 data-count={t.count}
@@ -168,13 +169,13 @@ const jsonLd = {
     </div>
 
     <p class="empty" data-empty hidden>
-      Nothing in this stage carries that tag yet. <a href="/submit">Add the first one</a>.
+      Nothing in this stage carries that tag yet. <a href={u('/submit')}>Add the first one</a>.
     </p>
 
     <nav class="stage-nav" aria-label="Stages">
       {
         prev ? (
-          <a class="stage-nav__link" href={`/stage/${prev.slug}`}>
+          <a class="stage-nav__link" href={u(`/stage/${prev.slug}`)}>
             <span class="eyebrow">← Previous</span>
             <span class="stage-nav__name">{prev.name}</span>
           </a>
@@ -184,7 +185,7 @@ const jsonLd = {
       }
       {
         next ? (
-          <a class="stage-nav__link stage-nav__link--next" href={`/stage/${next.slug}`}>
+          <a class="stage-nav__link stage-nav__link--next" href={u(`/stage/${next.slug}`)}>
             <span class="eyebrow">Next →</span>
             <span class="stage-nav__name">{next.name}</span>
           </a>

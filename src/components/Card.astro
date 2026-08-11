@@ -5,6 +5,7 @@
  * tool page; the arrow is a separate, smaller target that leaves the site.
  */
 import type { Entry } from '~/lib/data';
+import { u } from '~/lib/url';
 
 interface Props {
   entry: Entry;
@@ -24,7 +25,7 @@ const rest = entry.tags.filter((tag) => tag !== cost);
 <article class="card" data-tags={entry.tags.join(' ')} data-name={entry.name}>
   <div style="display:flex;align-items:flex-start;gap:0.6rem">
     <h3 class="card__name" style="flex:1;min-width:0">
-      <a class="card__link" href={entry.href}>{entry.name}</a>
+      <a class="card__link" href={u(entry.href)}>{entry.name}</a>
     </h3>
 
     {
@@ -55,9 +56,9 @@ const rest = entry.tags.filter((tag) => tag !== cost);
 
   <div class="card__meta">
     {showStage && <span class="chip chip--stage">{entry.stageRef.name}</span>}
-    {cost && <a class={`chip chip--cost chip--${cost}`} href={`/tag/${cost}`}>{cost}</a>}
+    {cost && <a class={`chip chip--cost chip--${cost}`} href={u(`/tag/${cost}`)}>{cost}</a>}
     {entry.verify && <span class="chip chip--unverified">unverified</span>}
     {entry.affiliate && <span class="chip chip--affiliate">affiliate link</span>}
-    {rest.map((tag) => <a class="chip" href={`/tag/${tag}`}>{tag}</a>)}
+    {rest.map((tag) => <a class="chip" href={u(`/tag/${tag}`)}>{tag}</a>)}
   </div>
 </article>

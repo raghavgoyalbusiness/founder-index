@@ -2,6 +2,7 @@
 import Base from '~/layouts/Base.astro';
 import Card from '~/components/Card.astro';
 import { stacks } from '~/lib/data';
+import { u } from '~/lib/url';
 
 export function getStaticPaths() {
   return stacks.map((stack, i) => ({
@@ -56,7 +57,7 @@ const jsonLd = {
   <div class="wrap">
     <header class="page-head">
       <p class="eyebrow">
-        <a href="/stacks" style="text-decoration:none">Stacks</a>
+        <a href={u('/stacks')} style="text-decoration:none">Stacks</a>
       </p>
       <h1>{stack.title}</h1>
       <p class="lede prose-measure" style="margin-top:0.7rem">{stack.for}</p>
@@ -88,7 +89,7 @@ const jsonLd = {
     <nav class="stage-nav" aria-label="Stacks">
       {
         prev ? (
-          <a class="stage-nav__link" href={`/stacks/${prev.slug}`}>
+          <a class="stage-nav__link" href={u(`/stacks/${prev.slug}`)}>
             <span class="eyebrow">← Previous</span>
             <span class="stage-nav__name">{prev.title}</span>
           </a>
@@ -98,7 +99,7 @@ const jsonLd = {
       }
       {
         next ? (
-          <a class="stage-nav__link stage-nav__link--next" href={`/stacks/${next.slug}`}>
+          <a class="stage-nav__link stage-nav__link--next" href={u(`/stacks/${next.slug}`)}>
             <span class="eyebrow">Next →</span>
             <span class="stage-nav__name">{next.title}</span>
           </a>

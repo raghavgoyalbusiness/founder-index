@@ -1,6 +1,7 @@
 ---
 import Base from '~/layouts/Base.astro';
 import { totals, REPO } from '~/lib/data';
+import { u } from '~/lib/url';
 ---
 
 <Base
@@ -71,7 +72,7 @@ import { totals, REPO } from '~/lib/data';
 
       <h2>Honest about uncertainty</h2>
       <p>
-        <a href="/unverified">{totals.unverified} of the {totals.entries} entries</a> carry an{' '}
+        <a href={u('/unverified')}>{totals.unverified} of the {totals.entries} entries</a> carry an{' '}
         <span class="chip chip--unverified">unverified</span> chip. That means the link or
         the description was inferred from a name in the original notes and nobody has
         confirmed it since. The tool might be misnamed, dead, or something other than what
@@ -111,7 +112,7 @@ import { totals, REPO } from '~/lib/data';
 
       <p style="margin-top:2.5rem">
         <a class="btn" href={REPO} rel="noopener" target="_blank">The repository</a>
-        <a class="btn btn--ghost" href="/submit" style="margin-left:0.5rem">Add a resource</a>
+        <a class="btn btn--ghost" href={u('/submit')} style="margin-left:0.5rem">Add a resource</a>
       </p>
     </div>
   </div>

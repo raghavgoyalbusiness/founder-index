@@ -8,6 +8,7 @@ import { totals } from '~/lib/data';
 // subsets) can wait for the stylesheet to ask for it.
 import displayFont from '@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-wght-normal.woff2?url';
 import bodyFont from '@fontsource-variable/ibm-plex-sans/files/ibm-plex-sans-latin-wght-normal.woff2?url';
+import { u } from '~/lib/url';
 
 interface Props {
   title: string;
@@ -37,7 +38,7 @@ const year = new Date().getFullYear();
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical.href} />
-    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="sitemap" href={u('/sitemap-index.xml')} />
 
     <link rel="preload" as="font" type="font/woff2" href={displayFont} crossorigin />
     <link rel="preload" as="font" type="font/woff2" href={bodyFont} crossorigin />
@@ -86,16 +87,16 @@ const year = new Date().getFullYear();
 
     <header class="site-header">
       <div class="wrap site-header__inner">
-        <a class="wordmark" href="/">
+        <a class="wordmark" href={u('/')}>
           <span class="wordmark__mark" aria-hidden="true"></span>
           Founder Index
         </a>
 
         <nav class="nav" aria-label="Main">
-          <a href="/" aria-current={nav === 'stages' ? 'page' : undefined}>Stages</a>
-          <a href="/stacks" aria-current={nav === 'stacks' ? 'page' : undefined}>Stacks</a>
-          <a href="/submit" aria-current={nav === 'submit' ? 'page' : undefined}>Submit</a>
-          <a href="/about" aria-current={nav === 'about' ? 'page' : undefined}>About</a>
+          <a href={u('/')} aria-current={nav === 'stages' ? 'page' : undefined}>Stages</a>
+          <a href={u('/stacks')} aria-current={nav === 'stacks' ? 'page' : undefined}>Stacks</a>
+          <a href={u('/submit')} aria-current={nav === 'submit' ? 'page' : undefined}>Submit</a>
+          <a href={u('/about')} aria-current={nav === 'about' ? 'page' : undefined}>About</a>
         </nav>
 
         <Search client:idle mode="palette" />
@@ -136,13 +137,13 @@ const year = new Date().getFullYear();
             request.
           </p>
           <nav aria-label="Footer" style="display:grid;gap:0.35rem">
-            <a class="mono" style="text-decoration:none" href="/stacks">Stacks</a>
-            <a class="mono" style="text-decoration:none" href="/tags">All tags</a>
-            <a class="mono" style="text-decoration:none" href="/unverified">
+            <a class="mono" style="text-decoration:none" href={u('/stacks')}>Stacks</a>
+            <a class="mono" style="text-decoration:none" href={u('/tags')}>All tags</a>
+            <a class="mono" style="text-decoration:none" href={u('/unverified')}>
               Unverified ({totals.unverified})
             </a>
-            <a class="mono" style="text-decoration:none" href="/submit">Submit a resource</a>
-            <a class="mono" style="text-decoration:none" href="/about">About</a>
+            <a class="mono" style="text-decoration:none" href={u('/submit')}>Submit a resource</a>
+            <a class="mono" style="text-decoration:none" href={u('/about')}>About</a>
           </nav>
         </div>
         <p class="mono" style="margin-top:2rem;text-transform:none;letter-spacing:0.02em">

@@ -1,6 +1,7 @@
 ---
 import Base from '~/layouts/Base.astro';
 import { tagCounts, allTags, totals } from '~/lib/data';
+import { u } from '~/lib/url';
 
 const used = new Set(tagCounts.map((t) => t.tag));
 const unused = allTags.filter((t) => !used.has(t));
@@ -25,7 +26,7 @@ const biggest = tagCounts[0]?.count ?? 1;
       {
         tagCounts.map((t) => (
           <li>
-            <a class="tag-row" href={`/tag/${t.tag}`}>
+            <a class="tag-row" href={u(`/tag/${t.tag}`)}>
               <span class="tag-row__name">{t.tag}</span>
               <span class="tag-row__bar" aria-hidden="true">
                 <span style={`width:${Math.max(4, Math.round((t.count / biggest) * 100))}%`} />
@@ -49,7 +50,7 @@ const biggest = tagCounts[0]?.count ?? 1;
           </p>
           <div style="display:flex;flex-wrap:wrap;gap:0.35rem">
             {unused.map((tag) => (
-              <a class="chip" href={`/tag/${tag}`}>
+              <a class="chip" href={u(`/tag/${tag}`)}>
                 {tag}
               </a>
             ))}

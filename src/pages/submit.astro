@@ -1,6 +1,7 @@
 ---
 import Base from '~/layouts/Base.astro';
 import { launchBacklog, excludedFromSource, REPO, totals, allTags, stages } from '~/lib/data';
+import { u } from '~/lib/url';
 
 const schemaExample = `{
   "name": "SeedLegals",
@@ -103,7 +104,7 @@ const newIssue = `${REPO}/issues/new?template=add-resource.yml`;
         <li>
           <strong>No paid placement.</strong> There is no amount of money that buys a listing
           or a position. If a link ever carries an affiliate code it gets flagged on the card
-          and declared in the repo. See <a href="/about">About</a>.
+          and declared in the repo. See <a href={u('/about')}>About</a>.
         </li>
       </ul>
 

@@ -7,6 +7,8 @@ A first-time founder doesn't know they need attribution software. They know they
 and nobody is coming back. So the site is filed by the question you're actually asking this
 week, and the answer is two or three resources rather than forty.
 
+**→ [raghavgoyalbusiness.github.io/founder-index](https://raghavgoyalbusiness.github.io/founder-index/)**
+
 **211 resources · 12 stages · 30 tags · 5 curated stacks**
 
 ---
@@ -118,14 +120,33 @@ and is not read at build time.
 - `lastChecked` is a real date and not in the future
 - Curated stacks reference entries that exist, 6–10 per stack
 
-### Before deploying
+### Deploying
 
-Two placeholders to replace:
+```bash
+npm run deploy
+```
 
-- `astro.config.mjs` — `site` (or set the `SITE_URL` environment variable)
-- `src/lib/data.ts` — `REPO`, used by the edit and "report a broken link" links
+Builds and force-pushes `dist/` to the `gh-pages` branch, which GitHub Pages serves. Nothing
+on `main` is touched.
 
-`src/pages/about.astro` has a marked placeholder where the maintainer's name should go.
+The site is written with root-absolute links, which is right for a domain root. A GitHub Pages
+project site lives under `/<repo>/` instead, so every internal link goes through `u()` in
+`src/lib/url.ts`, which prefixes Astro's configured `base`. That base comes from the
+`BASE_PATH` environment variable and is empty by default — so the same source deploys to a
+root host with no changes:
+
+| Host | Command |
+| --- | --- |
+| GitHub Pages | `npm run deploy` |
+| Vercel / Netlify / custom domain | connect the repo; build `npm run build`, publish `dist` |
+
+On Vercel or Netlify, leave `BASE_PATH` unset and set `SITE_URL` to the real domain.
+
+### Still to replace
+
+- `src/pages/about.astro` — a marked placeholder where the maintainer's name should go
+- `src/lib/data.ts` — `REPO`, if you fork this. It drives the "edit this file" and "report a
+  broken link" links
 
 ## Licence
 

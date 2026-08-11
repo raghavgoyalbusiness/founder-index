@@ -9,8 +9,14 @@ import tailwind from '@tailwindcss/vite';
 // canonical URLs, the sitemap and JSON-LD, so it has to be right in production.
 const site = process.env.SITE_URL ?? 'https://founderindex.dev';
 
+// Empty for a domain root (Vercel, Netlify, a custom domain). A GitHub Pages
+// project site is served from /<repo>/, so set BASE_PATH=/founder-index there.
+// Internal links go through `u()` in src/lib/url.ts, which reads this.
+const base = process.env.BASE_PATH || undefined;
+
 export default defineConfig({
   site,
+  base,
   output: 'static',
   trailingSlash: 'ignore',
   integrations: [react(), sitemap()],

@@ -7,6 +7,7 @@
  * Same markup either way — only the CSS changes.
  */
 import { stages } from '~/lib/data';
+import { u } from '~/lib/url';
 
 interface Props {
   current: string;
@@ -22,7 +23,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
     stages.map((stage, i) => (
       <a
         class="spine__tick"
-        href={`/stage/${stage.slug}`}
+        href={u(`/stage/${stage.slug}`)}
         style={`--i:${i}`}
         aria-current={stage.slug === current ? 'page' : undefined}
         aria-label={`Stage ${i + 1} of ${stages.length}: ${stage.name}`}

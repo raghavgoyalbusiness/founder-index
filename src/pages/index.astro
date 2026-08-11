@@ -2,6 +2,7 @@
 import Base from '~/layouts/Base.astro';
 import Search from '~/components/Search.tsx';
 import { stages, stageCounts, stacks, totals, tagCounts } from '~/lib/data';
+import { u } from '~/lib/url';
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
@@ -47,7 +48,7 @@ const topTags = tagCounts.slice(0, 12);
     <nav class="index" aria-label="Browse by stage">
       {
         stages.map((stage, i) => (
-          <a class="index__row" href={`/stage/${stage.slug}`} style={`--i:${i}`}>
+          <a class="index__row" href={u(`/stage/${stage.slug}`)} style={`--i:${i}`}>
             <span class="index__num" aria-hidden="true">
               {pad(i + 1)}
             </span>
@@ -77,18 +78,18 @@ const topTags = tagCounts.slice(0, 12);
     <Search client:idle mode="inline" />
     <div class="home-search__tags">
       {topTags.map((t) => (
-        <a class="chip" href={`/tag/${t.tag}`}>
+        <a class="chip" href={u(`/tag/${t.tag}`)}>
           {t.tag} <span style="opacity:0.6">{t.count}</span>
         </a>
       ))}
-      <a class="chip" href="/tags">all {totals.tags} tags →</a>
+      <a class="chip" href={u('/tags')}>all {totals.tags} tags →</a>
     </div>
   </section>
 
   <section class="wrap" aria-labelledby="stacks-heading">
     <div class="section-rule">
       <h2 id="stacks-heading" class="eyebrow" style="letter-spacing:0.14em">Stacks</h2>
-      <a class="mono" href="/stacks" style="margin-left:auto;text-decoration:none"
+      <a class="mono" href={u('/stacks')} style="margin-left:auto;text-decoration:none"
         >All {totals.stacks} →</a
       >
     </div>
@@ -98,7 +99,7 @@ const topTags = tagCounts.slice(0, 12);
     <div class="stack-grid">
       {
         stacks.map((stack) => (
-          <a class="stack-card" href={`/stacks/${stack.slug}`}>
+          <a class="stack-card" href={u(`/stacks/${stack.slug}`)}>
             <h3 class="stack-card__title">{stack.title}</h3>
             <p class="stack-card__for">{stack.for}</p>
             <span class="mono stack-card__count">{stack.entries.length} resources</span>
@@ -130,12 +131,12 @@ const topTags = tagCounts.slice(0, 12);
         public repo, so if something is wrong you can fix it yourself, and if a tool wants
         in it has to earn it the same way as everything else. {totals.unverified} of the{' '}
         {totals.entries} entries carry an <strong>unverified</strong> chip, which means
-        nobody has confirmed the link or the description yet — <a href="/unverified"
+        nobody has confirmed the link or the description yet — <a href={u('/unverified')}
           >those are the best place to start</a
         > if you want to help.
       </p>
       <p>
-        <a href="/submit">Add a resource</a> · <a href="/about">How this works</a>
+        <a href={u('/submit')}>Add a resource</a> · <a href={u('/about')}>How this works</a>
       </p>
     </div>
   </section>

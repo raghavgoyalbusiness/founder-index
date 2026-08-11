@@ -2,6 +2,7 @@
 import Base from '~/layouts/Base.astro';
 import Card from '~/components/Card.astro';
 import { allTags, entriesWithTag, stages } from '~/lib/data';
+import { u } from '~/lib/url';
 
 export function getStaticPaths() {
   // Every tag in the schema gets a page, including any that nothing carries
@@ -48,7 +49,7 @@ const jsonLd = {
   <div class="wrap">
     <header class="page-head">
       <p class="eyebrow">
-        <a href="/tags" style="text-decoration:none">Tags</a>
+        <a href={u('/tags')} style="text-decoration:none">Tags</a>
       </p>
       <h1><span class="tag-hash">#</span>{tag}</h1>
       <p class="lede prose-measure" style="margin-top:0.7rem">
@@ -63,14 +64,14 @@ const jsonLd = {
     {
       items.length === 0 ? (
         <p class="empty" style="padding-left:0">
-          Nothing here yet — <a href="/submit">add the first one</a>.
+          Nothing here yet — <a href={u('/submit')}>add the first one</a>.
         </p>
       ) : (
         byStage.map((group) => (
           <section class="cat">
             <div class="section-rule">
               <h2>
-                <a href={`/stage/${group.stage.slug}`} style="text-decoration:none">
+                <a href={u(`/stage/${group.stage.slug}`)} style="text-decoration:none">
                   {group.stage.name}
                 </a>
               </h2>
