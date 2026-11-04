@@ -2180,5 +2180,17 @@
     "category": "Unclassified",
     "tags": [],
     "verify": true
+  },
+  {
+    "name": "SitePatent",
+    "url": "https://sitepatent.com/",
+    "what": "List your product by category and tech stack, with a launch calendar",
+    "stage": "launch",
+    "category": "Launch directory",
+    "tags": [
+      "freemium",
+      "directory"
+    ],
+    "lastChecked": "2026-11-04"
   }
 ]
