@@ -708,6 +708,18 @@
     ]
   },
   {
+    "name": "MEDIAPRONET",
+    "url": "https://mediapronet.com/",
+    "what": "Directory of newly launched startups, SaaS tools and indie products",
+    "stage": "launch",
+    "category": "Launch directory",
+    "tags": [
+      "directory"
+    ],
+    "verify": true,
+    "why": "The free listing needs its badge on your homepage and goes live after at least 7 days; paid plans are one-time."
+  },
+  {
     "name": "AlternativeTo",
     "url": "https://alternativeto.net/",
     "what": "Get listed as the alternative to your big competitor",
